@@ -18,13 +18,13 @@ export default class IJSONable {
      * @param {object} jsonObj The json object to convert from
      * @returns {IJSONable} A new instance of this class 
      */
-    static fromJsonObject(jsonObj) { throw Exception("Unimplemented"); }
+    fromJsonObject(jsonObj) { throw Exception("Unimplemented"); }
 
     /**
      * Deserializes a json string to an instance of this class
      * @param {String} json The json string to deserialize
      * @returns {IJSONable} A new instance of this class 
      */
-    static fromJson(json) { console.log(json);return this.fromJsonObject(JSON.parse(json)); }
+    fromJson(json) { console.log(json);return this.fromJsonObject(JSON.parse(json)); }
 
 }

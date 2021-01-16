@@ -15,7 +15,7 @@ export default class SimObj extends IJSONable {
      */
     async select(user) {
         let conn = DBConnFactory();
-        let result = await conn.selectOne(this.toJsonObject());
+        let result = await conn.selectOne(this.toJsonObject(), this.tablename);
         this.fromJsonObject(result);
     }
 }

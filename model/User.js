@@ -8,11 +8,10 @@ export default class User extends SimObj {
         return {username: this.username, password: this.password}
     }
 
-    static fromJsonObject(jsonObj) {
-        let user = new User();
-        user.username = jsonObj.username;
-        user.password = jsonObj.password;
-        user.id = jsonObj.id;
-        return user;
+    fromJsonObject(jsonObj) {
+        this.username = jsonObj.username;
+        this.password = jsonObj.password;
+        this.id = jsonObj.id;
+        return this;
     }
 }

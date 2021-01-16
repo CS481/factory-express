@@ -13,7 +13,6 @@ export default class MongoConn extends IDBConn {
             DB_USR = encodeURIComponent(DB_USR);
             DB_PWD = encodeURIComponent(DB_PWD);
             let uri = `mongodb://${DB_USR}:${DB_PWD}@${DB_HOST}:${DB_PORT}/?poolSize=20`
-            console.log(uri)
             MongoConn.client = new MongoClient(uri);
             console.log(MongoConn.client)
         }
@@ -22,14 +21,24 @@ export default class MongoConn extends IDBConn {
     async selectOne(queryObj, table, cols=[]) {
         await MongoConn.client.connect();
         try {
-            let collection = client.db(MongoConn.db_name).collection(table);
+            let collection = MongoConn.client.db(MongoConn.db_name).collection(table);
             let projection = {}
             cols.forEach((element, projection) => {
                 projection[element] = 1;
             });
-            return collection.findOne(queryObj, {projection: projection});
+            return this.normalize(await collection.findOne(queryObj, {projection: projection}));
         } finally {
             await MongoConn.client.close();
         }
+    }
+
+    /**
+     * Turn the weird mongo fields into normal looking fields
+     * @param {object} obj The object retrieved from the mongo database
+     * @returns {object} The normalized object
+     */
+    normalize(obj) {
+        obj.id = obj._id;
+        return obj;
     }
 }
