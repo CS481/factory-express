@@ -1,7 +1,6 @@
 #!/bin/bash
-export DB_USR=root
+export DB_USR=dbuser
 export DB_PWD=6100!recumbentBike
-export DB_NAME=SimulationFactory
-export DB_HOST=192.168.1.12
-export DB_PORT=27017
+export DB_NAME=SimFactory
+export DB_HOST=cluster0.hgu8w.mongodb.net
 node ./bin/www

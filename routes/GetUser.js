@@ -5,7 +5,7 @@ var router = express.Router();
 
 router.post('/', function(req, res, next) {
   res.setHeader("content-type", "text/json")
-  let user = User.fromJsonObject(req.body);
+  let user = new User().fromJsonObject(req.body);
   selectUser(user,res);
 });
 

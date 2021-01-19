@@ -10,6 +10,7 @@ export default class SimObj extends IJSONable {
      * Uses fields already set as the query
      * The supplied user must have permission to select this SimObj
      * TODO: A full implementation of this
+     * How will we handle objects not found?
      * @param {model.User} user User trying to access this SimObj
      * @throws {}
      */
