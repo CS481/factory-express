@@ -49,10 +49,29 @@ export default class IDBConn {
      */
     update(queryObj, updatesObj, table) { throw Exception("Unimplemented"); }
 
-    /**
-     * Deletes entries from the database
-     * @param {object} queryObj Only entries that match this object are deleted
-     * @param {String} table The table to delete from
+        /**
+     * Replaces an existing entry in the database
+     * @param {object} queryObj A query that describes the object to replace in the database
+     * @param {object} replaceObj The new object to store in the database
+     * @param {String} table The table of the object to update 
      */
-    delete(queryObj, table) { throw Exception("Unimplemented"); }
+    async replace(queryObj, replaceObj, table) { throw Exception("Unimplemented"); }
+
+    /**
+     * Applies an OR operator to the given query object.
+     * The OR operator will select for any records that satisfy the conditions of any of the terms
+     * @param {object} queryObj The object to apply the OR to
+     * @param  {...object} terms Any number of query objects which satisfy the OR condition
+     * @returns {object} queryObj
+     */
+    or(queryObj, ...terms) { throw Exception("Unimplemented"); }
+
+    /**
+     * Returns an object that indicates a given field is not set in the database
+     * usage example: 
+     *      user.email = conn.not_set();
+     *      let db_user = conn.selectOne(user);
+     * @returns {object} An object that checks for fields that are not set
+     */
+    not_set() { throw Exception("Unimplemented"); }
 }
