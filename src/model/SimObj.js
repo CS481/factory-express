@@ -14,7 +14,7 @@ export default class SimObj extends IJSONable {
         let conn = DBConnFactory();
         let result = await conn.selectOne(this.toJsonObject(), this.tablename);
         if (result == null) {
-            throw Exception("The requested SimObj cannot be found in the database");
+            throw new Error("The requested SimObj cannot be found in the database");
         }
         this.fromJsonObject(result);
     }
@@ -26,7 +26,7 @@ export default class SimObj extends IJSONable {
      */
     async insert() {
         if (this.id != "") {
-            throw Exception(`Cannot insert new SimObj because id already set to ${this.id}`);
+            throw new Error(`Cannot insert new SimObj because id already set to ${this.id}`);
         }
         let conn = DBConnFactory();
         this.id = await conn.insert(this.toJsonObject(), this.tablename);
@@ -39,8 +39,8 @@ export default class SimObj extends IJSONable {
      * @throws If user does not have permission to update this object
      */
     async update(user) {
-        if (!this.modifyableBy(user)) {
-            throw Exception("This user does not have permissions to update this SimObj");
+        if (!(await this.modifyableBy(user))) {
+            throw new Error("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
         conn.update({id: this.id}, this.toJsonObject(), this.tablename);
@@ -52,8 +52,8 @@ export default class SimObj extends IJSONable {
      * @throws If user does not have permission to update this object
      */
     async replace(user) {
-        if (!this.modifyableBy(user)) {
-            throw Exception("This user does not have permissions to update this SimObj");
+        if (!(await this.modifyableBy(user))) {
+            throw new Error("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
         conn.replace({id: this.id}, this.toJsonObject(), this.tablename);
@@ -64,5 +64,5 @@ export default class SimObj extends IJSONable {
      * @param {mode.User} user The user trying to modify this SimObj
      * @returns {bool} True if user can modify this SimObj, or false otherwise
      */
-    async modifyableBy(user) { throw Exception("Unimplemented"); }
+    async modifyableBy(user) { throw new Error("Unimplemented"); }
 }
