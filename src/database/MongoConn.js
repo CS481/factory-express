@@ -28,13 +28,13 @@ export default class MongoConn extends IDBConn {
     async selectOne(queryObj, table, cols=[]) {
         await MongoConn._connected();
 
-        mongoize(queryObj);
+        _mongoize(queryObj);
         let collection = this._get_collection(table);
         let projection = {}
         cols.forEach((element) => {
             projection[element] = 1;
         });
-        return normalize(await collection.findOne(queryObj, {projection: projection}));
+        return _normalize(await collection.findOne(queryObj, {projection: projection}));
     }
 
     /**
@@ -46,7 +46,7 @@ export default class MongoConn extends IDBConn {
     async select(queryObj, table, cols=[]) {
         await MongoConn._connected();
 
-        mongoize(queryObj);
+        _mongoize(queryObj);
         let collection = this._get_collection(table);
         let projection = {}
         cols.forEach((element, projection) => {
@@ -63,7 +63,7 @@ export default class MongoConn extends IDBConn {
      */
     async insert(insertObj, table) {
         await MongoConn._connected();
-        mongoize(insertObj);
+        _mongoize(insertObj);
         let collection = this._get_collection(table);
         let result = await collection.insertOne(insertObj);
         return String(result.insertedId);
@@ -79,8 +79,8 @@ export default class MongoConn extends IDBConn {
     async update(queryObj, updatesObj, table) {
         await MongoConn._connected();
 
-        mongoize(queryObj);
-        mongoize(updatesObj);
+        _mongoize(queryObj);
+        _mongoize(updatesObj);
         let collection = this._get_collection(table);
         collection.updateOne(queryObj, {$set: updatesObj});
     }
@@ -94,8 +94,8 @@ export default class MongoConn extends IDBConn {
     async replace(queryObj, replaceObj, table) {
         await MongoConn._connected();
 
-        mongoize(queryObj);
-        mongoize(replaceObj);
+        _mongoize(queryObj);
+        _mongoize(replaceObj);
         let collection = this._get_collection(table);
         collection.replaceOne(queryObj, replaceObj);
     }
@@ -152,10 +152,72 @@ class MongoCursor {
     }
 
     /**
-     * Get the number of 
+     * Get the number of records this cursor selected
+     * @returns {Number} The number of records selected
      */
     async count() {
         return this.cursor.count();
+    }
+
+    /**
+     * Rewinds the cursor to the beginning of the selected data
+     */
+    async rewind() {
+        return this.cursor.rewind();
+    }
+
+    /**
+     * Executes the given callback on each record of the cursor
+     * @param {Function} callback The callback to execute on each record
+     */
+    async forEach(callback) {
+        return this.cursor.forEach(record => {
+            record = _normalize(record);
+            callback(record);
+        });
+    }
+
+    /**
+     * Returns whether or not this cursor has at least one more value
+     * @returns {Boolean} True if this cursor has more values, or false otherwise
+     */
+    async hasNext() {
+        return this.cursor.hasNext();
+    }
+
+    /**
+     * Returns the next result in this cursor
+     * @returns {Object} The next available result
+     */
+    async next() {
+        let result = await this.cursor.next();
+        _normalize(result);
+        return result;
+    }
+
+    /**
+     * Allow use of 'for await(let result of cursor) {...}' syntax
+     */
+    [Symbol.asyncIterator]() {
+        return {
+            cursor: this.cursor,
+            hasNext: this.hasNext,
+            getNext: this.next,
+            async next() {
+                if (!await this.hasNext()) {
+                    return {done: true};
+                } else {
+                    return {done: false, value: await this.getNext()};
+                }
+            }
+        };
+    }
+
+    /**
+     * Close the cursor to free up the resources it consumes
+     */
+    async close() {
+        return this.cursor.close();
     }
 }
 
@@ -164,7 +226,7 @@ class MongoCursor {
  * @param {object} obj The object retrieved from the mongo database
  * @returns {object} The normalized object
  */
-function normalize(obj) {
+function _normalize(obj) {
     // Ignore null object, because a selectOne that finds no result returns null
     if (obj != null) {
         obj.id = String(obj._id);
@@ -178,7 +240,7 @@ function normalize(obj) {
  * @param {object} obj  The object to mongoize
  * @returns {object} The mongoized object
  */
-function mongoize(obj) {
+function _mongoize(obj) {
     if ('id' in obj) {
         obj._id = mongodb.ObjectID(obj.id);
         delete obj.id;

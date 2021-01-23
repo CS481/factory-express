@@ -25,7 +25,7 @@ beforeAll(done => {
 
 afterAll(() => {
     // async function after() {
-    client.db(DB_NAME).collection(insertTable).deleteMany({});
+    // client.db(DB_NAME).collection(insertTable).deleteMany({});
 
     // }
     MongoConn._client.close();
@@ -101,6 +101,7 @@ test("Sucessfully updates one object", done => {
             await conn.update({id: id}, {"foo": "baz"}, insertTable);
             let findObj = {_id: mongodb.ObjectID(await id)};
             let result = await client.db(DB_NAME).collection(insertTable).findOne(findObj);
+            // delete result._id;
             expect(result).toMatchObject(updatedObj);
         } finally {
             done();
@@ -117,6 +118,7 @@ test("Sucessfully replaces one object", done => {
             await conn.replace({id: String(id)}, replaceObj, insertTable);
             let findObj = {_id: mongodb.ObjectID(await id)};
             let result = await client.db(DB_NAME).collection(insertTable).findOne(findObj);
+            // delete result._id;
             expect(result).toMatchObject(replaceObj);
         } finally {
             done();
