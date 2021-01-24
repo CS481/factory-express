@@ -54,7 +54,7 @@ test("Successfully selects one object", done => {
     test();
 });
 
-test("Sucessfully executes advanced queries", done => {
+test("Successfully executes advanced queries", done => {
     async function test() {
         try {
             // Query for several objects using an or
@@ -79,7 +79,7 @@ test("Sucessfully executes advanced queries", done => {
     test();
 });
 
-test("Sucessfully inserts one object", done => {
+test("Successfully inserts one object", done => {
     async function test() {
         try {
             let id = conn.insert(insertObj, insertTable);
@@ -93,7 +93,7 @@ test("Sucessfully inserts one object", done => {
     test();
 });
 
-test("Sucessfully updates one object", done => {
+test("Successfully updates one object", done => {
     async function test() {
         try {
             let response = await client.db(DB_NAME).collection(insertTable).insertOne(insertObj);
@@ -110,7 +110,7 @@ test("Sucessfully updates one object", done => {
     test();
 });
 
-test("Sucessfully replaces one object", done => {
+test("Successfully replaces one object", done => {
     async function test() {
         try {
             let response = await client.db(DB_NAME).collection(insertTable).insertOne(insertObj);

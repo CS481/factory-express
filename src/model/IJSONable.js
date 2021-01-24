@@ -26,5 +26,4 @@ export default class IJSONable {
      * @returns {IJSONable} A new instance of this class 
      */
     fromJson(json) { console.log(json);return this.fromJsonObject(JSON.parse(json)); }
-
 }

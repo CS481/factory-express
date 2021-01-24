@@ -118,4 +118,3 @@ test("SimObj successfully replaces in database", done => {
     }
     test();
 });
-
