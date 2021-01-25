@@ -3,6 +3,9 @@ import User from "./User.js";
 import MongoConn from "./MongoConn.js";
 
 export default class SimulationInstance extends SimObj {
+
+    conn = new MongoConn();
+
     /**Constructor for creating SimInstances
      * @param  {model.User[]} players The users that are playing the simulation
      * @param  {model.User[]} responses The responses of the players
@@ -19,7 +22,6 @@ T     */
         return this;
     }
 
-    conn = new MongoConn();
 
     // Need to import State once implemented
     /** Get the staate of the Simulaiton

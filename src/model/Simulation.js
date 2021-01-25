@@ -3,9 +3,9 @@ import User from "./User.js";
 import MongoConn from "./MongoConn.js";
 
 export default class Simulation extends SimObj {
-    // Not sure about declarations since we obviously actaully WANT data. double-checking declarations
-    // Constructor
-   
+
+    conn = new MongoConn();
+
     /** Constructor for Simulaiton instances
      * @param  {model.User} user The user creating this simulation
      * @param  {String} name The name of the simulation
@@ -21,7 +21,6 @@ export default class Simulation extends SimObj {
         return this;
     }
 
-    conn = new MongoConn();
 
     /**  Initialize a sim and return its ID
     *   @param {model.User} user The user creating this simulation

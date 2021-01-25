@@ -4,8 +4,9 @@ import MongoConn from "./MongoConn.js";
 
 export default class Frame extends SimObj {
     
-    conn = MongoConn();
-    /**
+    conn = new MongoConn();
+
+    /** Constructor for creating Frames
      * @param  {model.User} owner The user that owns the frame
      * @param  {model.Simulation} simulation The simulation
      * @param  {String} prompt the prompt being presented in the Frame
@@ -20,7 +21,7 @@ export default class Frame extends SimObj {
         this.prompt = prompt;
         this.effects = effects;
         this.responses = responses;
-        this.rounds = rounds;3
+        this.rounds = rounds;
         return this;
     }
 
@@ -35,7 +36,7 @@ export default class Frame extends SimObj {
         frame_id = this.insert(Frames, new_frame);
         
         return frame_id;
-    };
+    }
 
     /** Modify a frame and replace its contents in DB
     *   @param {model.User} user The user modifying this Frame
