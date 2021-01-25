@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-import app from '../app.js';
+import app from '../src/app.js';
 import _debug from 'debug';
 var debug = _debug('factory-express:server');
 import http from 'http';

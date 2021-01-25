@@ -5,7 +5,7 @@ export default class IJSONable {
      * Convert this object to a json object
      * @returns {object} The converted json object
      */
-    toJsonObject() { throw Exception("Unimplemented"); }
+    toJsonObject() { throw new Error("Unimplemented"); }
 
     /**
      * Serialize this object to a json string
@@ -18,7 +18,7 @@ export default class IJSONable {
      * @param {object} jsonObj The json object to convert from
      * @returns {IJSONable} A new instance of this class 
      */
-    fromJsonObject(jsonObj) { throw Exception("Unimplemented"); }
+    fromJsonObject(jsonObj) { throw new Error("Unimplemented"); }
 
     /**
      * Deserializes a json string to an instance of this class
@@ -26,5 +26,4 @@ export default class IJSONable {
      * @returns {IJSONable} A new instance of this class 
      */
     fromJson(json) { console.log(json);return this.fromJsonObject(JSON.parse(json)); }
-
 }
