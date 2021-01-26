@@ -64,5 +64,5 @@ export default class SimObj extends IJSONable {
      * @param {mode.User} user The user trying to modify this SimObj
      * @returns {bool} True if user can modify this SimObj, or false otherwise
      */
-    async modifyableBy(user) { throw new Error("Unimplemented"); }
+    async modifyableBy(user) { throw new UnimplementedError(); }
 }

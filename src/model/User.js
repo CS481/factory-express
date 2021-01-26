@@ -1,6 +1,7 @@
 import SimObj from "./SimObj.js";
 import DBConnFactory from "../database/DBConnFactory.js";
 import bcrypt from "bcrypt";
+import UnauthorizedError from "../exception/UnauthorizedError.js"
 
 //TODO: Password encryption (bcrypt?)
 export default class User extends SimObj {
@@ -41,7 +42,7 @@ export default class User extends SimObj {
             // User successfully authenticated, set any other information here
             this.id = dbRecord.id;
         } else {
-            throw new Error("User not authenticated");
+            throw new UnauthorizedError("User not authenticated");
         }
     }
 
