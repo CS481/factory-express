@@ -2,6 +2,7 @@ import SimObj from "./SimObj.js";
 import DBConnFactory from "../database/DBConnFactory.js";
 import bcrypt from "bcrypt";
 import UnauthorizedError from "../exception/UnauthorizedError.js"
+import UnprocessableError from "../exception/UnprocessableError.js";
 
 //TODO: Password encryption (bcrypt?)
 export default class User extends SimObj {
@@ -15,7 +16,7 @@ export default class User extends SimObj {
     static async SignUp(userObj) {
         let user = new User();
         user.username = userObj.username;
-        user.password = userObj.password;
+        user.password = userObj.password; // No need to enforce restrictions; we can use the schema for that
         user.id = await user.insert(user);
         return user;
     }
