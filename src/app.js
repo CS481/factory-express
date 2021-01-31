@@ -1,11 +1,14 @@
 import createError from 'http-errors';
 import express from 'express';
-import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
 import indexRouter from './routes/index.js';
-import GetUserRouter from './routes/GetUser.js';
+import Router from "./Router.js";
+
+// Imports for side effects
+import CreateAccount from "./routes/CreateAccount.js";
+import VerifyCredentials from "./routes/VerifyCredentials.js";
 
 var app = express();
 
@@ -19,8 +22,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static('./public'));
 
+Router.applyRoutes(app);
 app.use('/', indexRouter);
-app.use('/GetUser', GetUserRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -51,8 +51,9 @@ export default class User extends SimObj {
      * Returns a json object that can be stored in the database
      */
     async toDatabaseRecord() {
-        let record = this.toJsonObject();
+        let record = await this.toJsonObject();
         record.password = await bcrypt.hash(this.password, (Number)(process.env.BCRYPT_ROUNDS));
+        console.log(record);
         return record;
     }
 
