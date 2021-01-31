@@ -12,11 +12,11 @@ export default class SimObj extends IJSONable {
      */
     async select() {
         let conn = DBConnFactory();
-        let result = await conn.selectOne(this.toJsonObject(), this.tablename);
+        let result = await conn.selectOne(await this.toJsonObject(), this.tablename);
         if (result == null) {
             throw new Error("The requested SimObj cannot be found in the database");
         }
-        this.fromJsonObject(result);
+        await this.fromJsonObject(result);
     }
 
     /**
@@ -29,7 +29,7 @@ export default class SimObj extends IJSONable {
             throw new Error(`Cannot insert new SimObj because id already set to ${this.id}`);
         }
         let conn = DBConnFactory();
-        this.id = await conn.insert(this.toJsonObject(), this.tablename);
+        this.id = await conn.insert(await this.toJsonObject(), this.tablename);
         return this.id;
     }
 
@@ -43,7 +43,7 @@ export default class SimObj extends IJSONable {
             throw new Error("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
-        conn.update({id: this.id}, this.toJsonObject(), this.tablename);
+        conn.update({id: this.id}, await this.toJsonObject(), this.tablename);
     }
 
     /**
@@ -56,7 +56,7 @@ export default class SimObj extends IJSONable {
             throw new Error("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
-        conn.replace({id: this.id}, this.toJsonObject(), this.tablename);
+        conn.replace({id: this.id}, await this.toJsonObject(), this.tablename);
     }
 
      /**
@@ -77,5 +77,5 @@ export default class SimObj extends IJSONable {
      * @param {mode.User} user The user trying to modify this SimObj
      * @returns {bool} True if user can modify this SimObj, or false otherwise
      */
-    async modifyableBy(user) { throw new Error("Unimplemented"); }
+    async modifyableBy(user) { throw new UnimplementedError(); }
 }

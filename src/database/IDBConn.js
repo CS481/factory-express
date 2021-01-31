@@ -1,16 +1,20 @@
+import UnimplementedError from "../exception/UnimplementedError.js";
+
 export default class IDBConn {
     /**
      * Begin a database transaction
      */
-    beginTransaction() { throw new Error("Unimplemented"); }
+    beginTransaction() { throw new UnimplementedError(); }
+
     /**
      * Commit the currently active database transaction
      */
-    commitTransaction() { throw new Error("Unimplemented"); }
+    commitTransaction() { throw new UnimplementedError(); }
+
     /**
      * Rollback and quit the currently active database transaction
      */
-    abortTransaction() { throw new Error("Unimplemented"); }
+    abortTransaction() { throw new UnimplementedError(); }
 
     /**
      * Insert a new object into the database
@@ -19,7 +23,7 @@ export default class IDBConn {
      * @param {String[]} cols Only insert columns named by this array, or all columns if this array is left empty. Default is empty.
      * @returns {String} The id of the new database entry
      */
-    insert(newObj, table, cols=[]) { throw new Error("Unimplemented"); }
+    insert(newObj, table, cols=[]) { throw new UnimplementedError(); }
 
     /**
      * Select objects from the database that match the given query
@@ -30,7 +34,7 @@ export default class IDBConn {
      * @param {String[]} cols Only select columns named by this array, or all column if this array is left empty. Default is empty.
      * @returns {Iterable} The results of the select
      */
-    select(queryObj, table, cols=[]) { throw new Error("Unimplemented"); }
+    select(queryObj, table, cols=[]) { throw new UnimplementedError(); }
 
     /**
      * Select one entry from the database that match the given query. Similar to SELECT ... LIMIT 1
@@ -39,7 +43,7 @@ export default class IDBConn {
      * @param {String[]} cols Only select columns named by this array, or all column if this array is left empty. Default is empty.
      * @returns {object} The result of the select
      */
-    selectOne(queryObj, table, cols=[]) { throw new Error("Unimplemented"); }
+    selectOne(queryObj, table, cols=[]) { throw new UnimplementedError(); }
 
     /**
      * Updates an existing entry in the database
@@ -47,7 +51,7 @@ export default class IDBConn {
      * @param {object} updatesObj Updates to apply to the matching entries
      * @param {String} table The table to update in
      */
-    update(queryObj, updatesObj, table) { throw new Error("Unimplemented"); }
+    update(queryObj, updatesObj, table) { throw new UnimplementedError(); }
 
     /**
      * Replaces an existing entry in the database
@@ -55,7 +59,7 @@ export default class IDBConn {
      * @param {object} replaceObj The new object to store in the database
      * @param {String} table The table of the object to update 
      */
-    async replace(queryObj, replaceObj, table) { throw new Error("Unimplemented"); }
+    async replace(queryObj, replaceObj, table) { throw new UnimplementedError(); }
 
     /**
      * Deletes an existing entry in the database
@@ -72,7 +76,7 @@ export default class IDBConn {
      * @param  {...object} terms Any number of query objects which satisfy the OR condition
      * @returns {object} queryObj
      */
-    or(queryObj, ...terms) { throw new Error("Unimplemented"); }
+    or(queryObj, ...terms) { throw new UnimplementedError(); }
 
     /**
      * Returns an object that indicates a given field is not set in the database
@@ -81,6 +85,5 @@ export default class IDBConn {
      *      let db_user = conn.selectOne(user);
      * @returns {object} An object that checks for fields that are not set
      */
-    not_set() { throw new Error("Unimplemented"); }
+    not_set() { throw new UnimplementedError(); }
 
-}
