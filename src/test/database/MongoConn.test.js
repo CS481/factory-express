@@ -126,3 +126,23 @@ test("Successfully replaces one object", done => {
     }
     test();
 });
+
+test("Successfully deletes one object", done => {
+    async function test() {
+        try {
+            let response = await client.db(DB_NAME).collection(insertTable).insertOne(insertObj);
+            let id = response.insertedId;
+            await conn.delete({id: String(id)}, deleteObj, insertTable);
+            let findObj = {_id: mongodb.ObjectID(await id)};
+
+            // This should be null as the item should have been deleted
+            let result = await client.db(DB_NAME).collection(insertTable).findOne(findObj);
+
+            // delete result._id;
+            expect(result).toBeNull;
+        } finally {
+            done();
+        }
+    }
+    test();
+});

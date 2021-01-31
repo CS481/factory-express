@@ -101,6 +101,21 @@ export default class MongoConn extends IDBConn {
     }
 
     /**
+     * Deletes an existing entry in the database
+     * @param {object} queryObj A query that describes the object to replace in the database
+     * @param {object} deleteObj The  object to be deleted from the database
+     * @param {String} table The table of the object to update 
+     */
+    async delete(queryObj, deleteObj, table) {
+        await MongoConn._connected();
+
+        _mongoize(queryObj);
+        _mongoize(deleteObj);
+        let collection = this._get_collection(table);
+        collection.deleteOne(queryObj, deleteObj);
+    }
+    
+    /**
      * Applies an OR operator to the given query object.
      * The OR operator will select for any records that satisfy the conditions of any of the terms
      * @param {object} queryObj The object to apply the OR to
