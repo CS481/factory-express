@@ -37,21 +37,23 @@ T     */
      * @param  {model.User} user
      * @param  {String} string
      */
-    async submit_response(user, string) {
-        let simInst = new SimulationInstance();
-        simInst.user = user;
-        simInst.string = string;
+    async submit_response(user, response) {
+        this.user = user;
+        this.response = response;
 
         await this.insert();
     }
 
     /** Gets the current turn ffor the selected user
      * @param  {model.User} user The user whos turn it is
+     * @param  {String} simID The id of the simulation
      * @returns {Int} curTurn_number Turn_number Returns the current turn_number
      */
-    async getCurrentTurn(user) {
-        let sim = await new SimulationInstance();
-        sim.user =  user;
+    async getCurrentTurn(user, simID) {
+        this.simID = simID;
+        // make arrray containing the user. Mongo should search for it. 
+        this.user =  user;
+        this.select();
         let curTurn_number = await this.turn_number;
         return curTurn_number;
     }
@@ -60,9 +62,10 @@ T     */
     *   @param {model.User} user The user to begin the simulation
     */ 
     async begin_sim(user) {
-        let sim = await new SimulationInstance();
-        sim.user = user;
-        sim.turn_number = 0;
+        // make arrray containing the user. Mongo should search for it. 
+
+        this.user = user;
+        this.turn_number = 0;
 
         await this.insert();
     }

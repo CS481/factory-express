@@ -55,7 +55,7 @@ test("Simulaiton Instance successfully gets the current turn number for the user
         try{
             let currentTurn = new SimulationInstance(mock_players, mock_responses, mock_deadline, mock_turnNumber)
             await currentTurn.getCurrentTurn(mock_user1);
-            expect(currentTurn).toEqual(5);
+            expect(currentTurn.turn_number).toEqual(5);
         } finally {
             done();
         }
