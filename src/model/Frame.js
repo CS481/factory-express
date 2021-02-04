@@ -1,9 +1,10 @@
 import SimObj from "./SimObj.js";
-import User from "./User.js";
-import MongoConn from "./MongoConn.js";
+import MongoConn from "../database/MongoConn.js";
 
 export default class Frame extends SimObj {
     
+    tablename = "";
+
     conn = new MongoConn();
 
     /** Constructor for creating Frames
@@ -30,10 +31,14 @@ export default class Frame extends SimObj {
     *   @param {String} sim_id the id of the sim being created
     *   @returns {String} the id of the new frame
     */
-    async initialize_frame(user, sim_id) {
-        this.user = user;
+    async init_frame(user, sim_id) {
+        let new_frame = new Frame();
+
+        this.user = await user;
+
         new_frame.simulation_id = sim_id;
-        frame_id = this.insert(Frames, new_frame);
+
+        let frame_id = await this.insert();
         
         return frame_id;
     }
@@ -43,15 +48,15 @@ export default class Frame extends SimObj {
     *   @param {Object} frame_data the object of the frame being modified
     *   @param {String} frame_id the id of the affected frame
     */
-    async modify_frames(user, frame_data, frame_id) {
+    async modify_frame(user, frame_data, frame_id) {
 
-        frameCon = new Frame();
+        let frame = new Frame();
 
-        frame_query = this.selectOne('_id', frame_id);
-        frame = this.selectOne('Frames', frame_query);       
+        let frame_query = await this.select('_id', frame_id);
+        frame = await this.select('Frames', frame_query);       
         frame_data.simulation_id = frame.simulation_id;
         
-        this.replace(frame_query, frame_data, 'Frames');
+        await this.replace(user);
 
     }
 
@@ -60,13 +65,13 @@ export default class Frame extends SimObj {
     *   @param {Object} frame_data the object of the frame being deleted
     *   @param {String} frame_id the id of the frame being deleted
     */
-    async delete_frames(user, frame_data, frame_id) {
-        frameCon = new Frame();
+    async delete_frame(user, frame_data, frame_id) {
+        let frame = new Frame();
 
-        frame_query = this.selectOne('_id', frame_id);
-        frame = this.selectOne('Frames', frame_query);       
+        let frame_query = await this.select('_id', frame_id);
+        frame = await this.select('Frames', frame_query);       
         frame_data.simulation_id = frame.simulation_id;
         
-        this.delete(frame_query, frame_data, 'Frames');
+        await this.delete(user);
     }
 }

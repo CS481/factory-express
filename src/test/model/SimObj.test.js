@@ -125,8 +125,9 @@ test("SimObj successfully replaces in database", done => {
 test("SimObj successfully deletes from database", done => {
     async function test() {
         try {
-            //need to insert an obj before deleting it. 
-            let result = new SimObjChild().insert();
+            // Need to insert an obj before deleting it. 
+            let result = new SimObjChild();
+            await result.insert();
             expect(mockInsert).toHaveBeenCalledTimes(1);
             expect(mockInsert.mock.calls[0][0]).toEqual(childJsonObject);
             expect(mockInsert.mock.calls[0][1]).toEqual(childTablename);
@@ -134,8 +135,15 @@ test("SimObj successfully deletes from database", done => {
             // Now attempt to delete the entry.
             await result.delete(userCanModify);
             expect(mockDelete).toHaveBeenCalledTimes(1);
-            expect(mockDelete.mock.calls[0][0]).toBeNull;
-            expect(mockDelete.mock.calls[0][1]).toBeNull;
+            expect(mockDelete.mock.calls[0][0]).toEqual({id: mockId});
+            expect(mockDelete.mock.calls[0][1]).toEqual(childJsonObject);
+            expect(mockDelete.mock.calls[0][2]).toEqual(childTablename);
+
+            /*  TODO: check that the entry was deleted. 
+            *   THis would require making another select, but not using (or creating a new) the set mock for select. 
+            *   THe current mockSelectOne mocks the selection to be {"color": "green", "id": "1234"}
+            */
+
             await expect(result.delete(userCannotModify)).rejects.toThrow(Error);
         } finally {
             done();

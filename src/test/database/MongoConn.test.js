@@ -14,6 +14,7 @@ const insertTable = "insert";
 let insertObj = {};
 const updatedObj = {"foo":"baz","num":42,"list":["hai",17.4],"subobj":{"foo":"baz"}};
 const replaceObj = {"some": "unrelated", "object": 1}
+const deleteObj = {"some": "unrelated", "object": 1};
 
 beforeAll(done => {
     async function before() {

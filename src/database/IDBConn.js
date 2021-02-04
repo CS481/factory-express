@@ -86,4 +86,4 @@ export default class IDBConn {
      * @returns {object} An object that checks for fields that are not set
      */
     not_set() { throw new UnimplementedError(); }
-
+}

@@ -1,14 +1,14 @@
 import SimObj from "./SimObj.js";
-import User from "./User.js";
-import MongoConn from "./MongoConn.js";
+import MongoConn from "../database/MongoConn.js";
+import State from "./State.js"
 
 export default class SimulationInstance extends SimObj {
-
+    tablename = "";
     conn = new MongoConn();
 
     /**Constructor for creating SimInstances
      * @param  {model.User[]} players The users that are playing the simulation
-     * @param  {model.User[]} responses The responses of the players
+     * @param  {String[]} responses The responses of the players
      * @param  {Int} deadline The deadline for the submission of responses by players
      * @param  {Int} turn_number The number of the current turn
      * @returns {model.SimulationInstance} Returns an new instance of SimulationInstance
@@ -24,10 +24,12 @@ T     */
 
 
     // Need to import State once implemented
-    /** Get the staate of the Simulaiton
+    /** Get the state of the Simulation
      * @returns {model.State} Returns the state of the simulaiton
      */ 
-    async GetState() { 
+    async getState() { 
+        let state =  new State();
+        this.state = state;
         return this.State;
     }
 
@@ -36,25 +38,32 @@ T     */
      * @param  {String} string
      */
     async submit_response(user, string) {
-        simInst = new SimulationInstance();
-        tablename = "";
-
+        let simInst = new SimulationInstance();
         simInst.user = user;
         simInst.string = string;
 
-        //need to insert the user and resonse to the DB
-        //not sure of correct tbale name, hence init at the begining
-        this.insert(simInst.user, this.tablename);
+        await this.insert();
     }
 
     /** Gets the current turn ffor the selected user
      * @param  {model.User} user The user whos turn it is
-     * @returns {model.SimulationInstance} Returns the current turn_number
+     * @returns {Int} curTurn_number Turn_number Returns the current turn_number
      */
-    static async getCurrentTurn(user) {
-        simInst = new SimulationInstance();
-        simInst.user = user;
-        
-        return this.turn_number;
+    async getCurrentTurn(user) {
+        let sim = await new SimulationInstance();
+        sim.user =  user;
+        let curTurn_number = await this.turn_number;
+        return curTurn_number;
+    }
+
+    /** Sets the turn_number round to 0 to begin the existing simulation
+    *   @param {model.User} user The user to begin the simulation
+    */ 
+    async begin_sim(user) {
+        let sim = await new SimulationInstance();
+        sim.user = user;
+        sim.turn_number = 0;
+
+        await this.insert();
     }
 }

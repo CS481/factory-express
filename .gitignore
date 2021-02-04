@@ -3,3 +3,4 @@ lib/*
 start.sh
 test.sh
 scripts.zip
+package-lock.json

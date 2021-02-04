@@ -1,9 +1,10 @@
 import SimObj from "./SimObj.js";
-import User from "./User.js";
-import MongoConn from "./MongoConn.js";
+import Frame from "./Frame.js";
+import MongoConn from "../database/MongoConn.js";
 
 export default class Simulation extends SimObj {
-
+    
+    tablename = "";
     conn = new MongoConn();
 
     /** Constructor for Simulaiton instances
@@ -26,22 +27,24 @@ export default class Simulation extends SimObj {
     *   @param {model.User} user The user creating this simulation
     *   @returns {String} the id of the new simulaiton
     */
-    static async initialize_sim(user) {
+    async init_sim(user) {
 
-        sim = new Simulation();
+        let sim = new Simulation();
 
-        facilitator.username = user.username;
+        sim.username = user.username;
+
+        let sim_id = sim.insert();
+
+        let frame = new Frame();
+        let frame_id = frame.init_frame(user, sim_id);
         
-        sim_id = this.insert('Simulations', facilitator);
-        frame_id = this.initialize_frame(user, sim_id);
-        
-        default_end_frame =  {
+        let default_end_frame =  {
             prompt: 'This simulation has ended. Thank you for your participation.', 
             rounds: [-1], 
             responses: [] 
         } ;                        
         
-        this.modify_frame(user, default_end_frame, frame_id);
+        await frame.modify_frame(user, default_end_frame, frame_id);
         return sim_id;
     };
 
@@ -53,7 +56,9 @@ export default class Simulation extends SimObj {
     */
     async modify_sim(user, sim_data, sim_id) {
         
-       sim = new Simulation();
+       let sim = new Simulation();
+       
+       sim.sim_id = sim_id;
         
        /*  These may be set from the JSON POST data. Best to unset them just in case
         *   delete(frame_data.user);
@@ -63,17 +68,6 @@ export default class Simulation extends SimObj {
         // Some values cannot be allowed to change
         sim_data.username = user.username;
       
-        this.replace({_id: sim_id}, sim_data, 'Simulations');
+        await this.update(user);
     };
-
-    // May move to siminstance class
-    
-    /** Sets the initial round to 0 to begin the existing simulation
-    *   @param {model.User} user The user to begin the simulation
-    */ 
-    async begin_sim(user) {
-        sim = new Simulation();
-        sim.rounds = [0];
-        this.insert(sim.rounds, 'Simulations');
-    }
 };

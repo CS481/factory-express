@@ -69,7 +69,7 @@ export default class SimObj extends IJSONable {
             throw new Error("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
-        conn.delete({id: this.id}, this.toJsonObject(), this.tablename);    
+        conn.delete({id: this.id}, await this.toJsonObject(), this.tablename);    
     }
 
     /**
