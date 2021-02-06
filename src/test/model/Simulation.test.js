@@ -17,6 +17,7 @@ SimObj.default = jest.fn(() => {
     return {
         init_sim: mockInsert,
         modify_sim: mockUpdate,
+        
     }
 });
 

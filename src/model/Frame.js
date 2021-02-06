@@ -32,15 +32,14 @@ export default class Frame extends SimObj {
     *   @returns {String} the id of the new frame
     */
     async init_frame(user, sim_id) {
-        let new_frame = new Frame();
 
-        this.user = await user;
+        this.user = user;
 
-        new_frame.simulation_id = sim_id;
+        this.simulation_id = sim_id;
 
-        let frame_id = await this.insert();
+        this.id = await this.insert();
         
-        return frame_id;
+        return this.frame_id;
     }
 
     /** Modify a frame and replace its contents in DB
@@ -50,12 +49,13 @@ export default class Frame extends SimObj {
     */
     async modify_frame(user, frame_data, frame_id) {
 
-        let frame = new Frame();
+        this.frame_id = frame_id;
+        await this.select();
 
-        let frame_query = await this.select('_id', frame_id);
-        frame = await this.select('Frames', frame_query);       
-        frame_data.simulation_id = frame.simulation_id;
-        
+        this.tablename = "Frames";
+        await this.select();     
+
+        this.frame_data = frame_data;  
         await this.replace(user);
 
     }
@@ -66,12 +66,15 @@ export default class Frame extends SimObj {
     *   @param {String} frame_id the id of the frame being deleted
     */
     async delete_frame(user, frame_data, frame_id) {
-        let frame = new Frame();
 
-        let frame_query = await this.select('_id', frame_id);
-        frame = await this.select('Frames', frame_query);       
-        frame_data.simulation_id = frame.simulation_id;
-        
+        this.id = frame_id;
+        await this.select();
+
+        this.tablename = "Frames";
+        await this.select();       
+
+
+        this.frame_data = frame_data;          
         await this.delete(user);
     }
 }

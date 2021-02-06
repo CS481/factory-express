@@ -51,11 +51,11 @@ T     */
      */
     async getCurrentTurn(user, simID) {
         this.simID = simID;
-        // make arrray containing the user. Mongo should search for it. 
-        this.user =  user;
-        this.select();
-        let curTurn_number = await this.turn_number;
-        return curTurn_number;
+        // make array containing the user. Mongo should search for it. 
+        this.players =  {players: {$eleMatch: {user}}};
+        await this.select();
+
+        return this.turn_number;
     }
 
     /** Sets the turn_number round to 0 to begin the existing simulation
@@ -64,7 +64,9 @@ T     */
     async begin_sim(user) {
         // make arrray containing the user. Mongo should search for it. 
 
-        this.user = user;
+        this.players =  {players: {$eleMatch: {user}}};
+        await this.select();
+        
         this.turn_number = 0;
 
         await this.insert();

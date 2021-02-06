@@ -29,14 +29,12 @@ export default class Simulation extends SimObj {
     */
     async init_sim(user) {
 
-        let sim = new Simulation();
+        this.username = user.username;
 
-        sim.username = user.username;
-
-        let sim_id = sim.insert();
+        let sim_id = await this.insert();
 
         let frame = new Frame();
-        let frame_id = frame.init_frame(user, sim_id);
+        let frame_id = await frame.init_frame(user, sim_id);
         
         let default_end_frame =  {
             prompt: 'This simulation has ended. Thank you for your participation.', 
@@ -55,10 +53,8 @@ export default class Simulation extends SimObj {
     *   @param {String} sim_id is the id of the simulation to modifiy
     */
     async modify_sim(user, sim_data, sim_id) {
-        
-       let sim = new Simulation();
-       
-       sim.sim_id = sim_id;
+               
+       this.sim_id = sim_id;
         
        /*  These may be set from the JSON POST data. Best to unset them just in case
         *   delete(frame_data.user);
