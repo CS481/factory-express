@@ -1,11 +1,9 @@
 import SimObj from "./SimObj.js";
 import Frame from "./Frame.js";
-import MongoConn from "../database/MongoConn.js";
 
 export default class Simulation extends SimObj {
     
-    tablename = "";
-    conn = new MongoConn();
+    tablename = "Simulation";
 
     /** Constructor for Simulaiton instances
      * @param  {model.User} user The user creating this simulation
@@ -14,13 +12,39 @@ export default class Simulation extends SimObj {
      * @param  {String, Float} resource The resources contained in the simulation
      * @returns {model.Simulation} Returns an new instance of a simulation
      */
-    Simulation(user, name, response_timeout, resource) {
-        this.user = user
-        this.name = name;
-        this.response_timeout = response_timeout; //fetched from db or set 
-        this.resource = resource;
+    // Simulation(user, name, response_timeout, resource) {
+    //     this.user = user
+    //     this.name = name;
+    //     this.response_timeout = response_timeout; //fetched from db or set 
+    //     this.resource = resource;
+    //     return this;
+    // }
+
+    async toJsonObject() {
+        return {
+            user: this.user,
+            name: this.name,
+            response_timeout: this.response_timeout,
+            resource: this.resource
+        }
+    }
+
+    async fromJsonObject(jsonObj) {
+        this.user = jsonObj.user;
+        this.name = jsonObj.name;
+        this.response_timeout = jsonObj.response_timeout; //fetched from db or set 
+        this.resource = jsonObj.resource;3
+        await this.select();
         return this;
     }
+
+    /**
+     * Returns whether or not this SimObj can be modified by user
+     * @param {mode.User} user The user trying to modify this SimObj
+     * @returns {bool} True if user can modify this SimObj, or false otherwise
+     */
+    async modifyableBy(user) { throw new UnimplementedError(); }
+
 
 
     /**  Initialize a sim and return its ID
@@ -29,7 +53,7 @@ export default class Simulation extends SimObj {
     */
     async init_sim(user) {
 
-        this.username = user.username;
+        this.username = await user.username;
 
         let sim_id = await this.insert();
 

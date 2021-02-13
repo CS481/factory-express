@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "start.sh",
-    "test": "test.sh"
+    "start": "./start.sh",
+    "test": "./test.sh"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",

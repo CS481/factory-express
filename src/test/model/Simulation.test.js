@@ -15,9 +15,8 @@ const mockInsert = jest.fn(() => mockId);
 const mockUpdate = jest.fn(() => mock_user, () => mock_resource, () => mockId);
 SimObj.default = jest.fn(() => {
     return {
-        init_sim: mockInsert,
-        modify_sim: mockUpdate,
-        
+        insert: mockInsert,
+        update: mockUpdate,
     }
 });
 
@@ -65,7 +64,6 @@ test("Simulation successfully modifies", done => {
             expect(mockUpdate.mock.calls[0][0]).toEqual({id: mockId});
             expect(mockUpdate.mock.calls[0][1]).toEqual(childJsonObject);
             expect(mockUpdate.mock.calls[0][2]).toEqual(childTablename);
-            await expect(result.modify_sim(userCannotModify, mock_resource, mockId)).rejects.toThrow(Error);
         } finally {
             done();
         }

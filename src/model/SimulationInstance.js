@@ -1,10 +1,8 @@
 import SimObj from "./SimObj.js";
-import MongoConn from "../database/MongoConn.js";
 import State from "./State.js"
 
 export default class SimulationInstance extends SimObj {
-    tablename = "";
-    conn = new MongoConn();
+    tablename = "SimulationInstances";
 
     /**Constructor for creating SimInstances
      * @param  {model.User[]} players The users that are playing the simulation
@@ -13,12 +11,33 @@ export default class SimulationInstance extends SimObj {
      * @param  {Int} turn_number The number of the current turn
      * @returns {model.SimulationInstance} Returns an new instance of SimulationInstance
 T     */
-    SimulationInstance(players, responses, deadline, turn_number, resources) {
+    /*SimulationInstance(players, responses, deadline, turn_number, resources) {
         this.players = players;
         this.responses = responses;
         this.deadline = deadline;
         this.turn_number = turn_number;
         this.resources = resources;
+        return this;
+    }
+    */
+
+    async toJsonObject() {
+        return {
+            players: this.players,
+            responses: this.responses,
+            deadline: this.deadline,
+            turn_number: this.turn_number,
+            resources: this.resources
+        }
+    }
+
+    async fromJsonObject(jsonObj) {
+        this.players = jsonObj.players;
+        this.responses = jsonObj.responses;
+        this.deadline = jsonObj.deadline;
+        this.turn_number = jsonObj.turn_number;
+        this.resources = jsonObj.resources;
+        await this.select();
         return this;
     }
 
@@ -52,7 +71,7 @@ T     */
     async getCurrentTurn(user, simID) {
         this.simID = simID;
         // make array containing the user. Mongo should search for it. 
-        this.players =  {players: {$eleMatch: {user}}};
+        this.players =  user;
         await this.select();
 
         return this.turn_number;
@@ -64,11 +83,11 @@ T     */
     async begin_sim(user) {
         // make arrray containing the user. Mongo should search for it. 
 
-        this.players =  {players: {$eleMatch: {user}}};
+        this.players =  user;
         await this.select();
         
         this.turn_number = 0;
 
-        await this.insert();
+        await this.update(this.user);
     }
 }

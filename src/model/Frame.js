@@ -1,11 +1,8 @@
 import SimObj from "./SimObj.js";
-import MongoConn from "../database/MongoConn.js";
 
 export default class Frame extends SimObj {
     
-    tablename = "";
-
-    conn = new MongoConn();
+    tablename = "Frame";
 
     /** Constructor for creating Frames
      * @param  {model.User} owner The user that owns the frame
@@ -26,6 +23,28 @@ export default class Frame extends SimObj {
         return this;
     }
 
+    async toJsonObject() {
+        return {
+            owner: this.owner,
+            simulation: this.simulation,
+            prompt: this.prompt,
+            effects: this.effects,
+            responses: this.responses,
+            rounds: this.rounds
+        }
+    }
+
+    async fromJsonObject(jsonObj) {
+        this.owner = jsonObj.owner;
+        this.simulation = jsonObj.simulation;
+        this.prompt = jsonObj.prompt;
+        this.effects = jsonObj.effects;
+        this.responses = jsonObj.responses;
+        this.rounds = jsonObj.rounds;
+        await this.select();
+        return this;
+    }
+
     /** Initialize a frame and return its ID
     *   @param {model.User} The user creating this Frame
     *   @param {String} sim_id the id of the sim being created
@@ -39,7 +58,7 @@ export default class Frame extends SimObj {
 
         this.id = await this.insert();
         
-        return this.frame_id;
+        return this.id;
     }
 
     /** Modify a frame and replace its contents in DB
@@ -52,11 +71,8 @@ export default class Frame extends SimObj {
         this.frame_id = frame_id;
         await this.select();
 
-        this.tablename = "Frames";
-        await this.select();     
-
         this.frame_data = frame_data;  
-        await this.replace(user);
+        await this.update(user);
 
     }
 
@@ -69,10 +85,6 @@ export default class Frame extends SimObj {
 
         this.id = frame_id;
         await this.select();
-
-        this.tablename = "Frames";
-        await this.select();       
-
 
         this.frame_data = frame_data;          
         await this.delete(user);
