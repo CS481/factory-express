@@ -4,23 +4,6 @@ import State from "./State.js"
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
 
-    /**Constructor for creating SimInstances
-     * @param  {model.User[]} players The users that are playing the simulation
-     * @param  {String[]} responses The responses of the players
-     * @param  {Int} deadline The deadline for the submission of responses by players
-     * @param  {Int} turn_number The number of the current turn
-     * @returns {model.SimulationInstance} Returns an new instance of SimulationInstance
-T     */
-    /*SimulationInstance(players, responses, deadline, turn_number, resources) {
-        this.players = players;
-        this.responses = responses;
-        this.deadline = deadline;
-        this.turn_number = turn_number;
-        this.resources = resources;
-        return this;
-    }
-    */
-
     async toJsonObject() {
         return {
             players: this.players,
@@ -37,7 +20,6 @@ T     */
         this.deadline = jsonObj.deadline;
         this.turn_number = jsonObj.turn_number;
         this.resources = jsonObj.resources;
-        await this.select();
         return this;
     }
 

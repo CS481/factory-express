@@ -1,60 +1,51 @@
+import * as MongoConn from "../../database/MongoConn.js";
 import Simulation from "../../model/Simulation.js";
-import {jest} from "@jest/globals";
 import User from "../../model/User.js";
-import SimObj from "../../model/SimObj.js";
 import Frame from "../../model/Frame.js";
 
-const mock_user = new User();
-mock_user.username = "me";
-mock_user.password = "you";
-const mockData = "prompt";
-const mockSim = new Simulation();
-
-
-// SimObj mock
-const SimObjImpl = SimObj.default; // Save the unmocked copy
+// MongoConn mock
+const MongoConnImpl = MongoConn.default; // Save the unmocked copy
 const mockId = "1234";
 const mockInsert = jest.fn(() => mockId);
-const mockUpdate = jest.fn(() => mock_user,  () => mockData, () => mockId);
-const mockDelete = jest.fn(() => mock_user,  () => mockData, () => mockId);
-SimObj.default = jest.fn(() => {
+const mockReplace = jest.fn();
+const mockDelete = jest.fn();
+MongoConn.default = jest.fn(() => {
     return {
-        init_frame: mockInsert,
-        modify_frame: mockUpdate,
-        delete_frame: mockDelete,
+        insert: mockInsert,
+        replace: mockReplace,
+        delete: mockDelete
     }
 });
 
-// A simple implementation of SimObj to test with
-const childJsonObject = {color: "yellow"};
-const childTablename = "SimObjChild";
-
-
-// Users
-const userCanModify = {canModify: true};
-const userCannotModify = {canModify: false};
+const user1 = new User();
+user1.id = "Can modify";
+const user2 = new User();
+user2.id = "Cannot modify";
+const mockSim = new Simulation();
+const mock_data = {id: mockId, user: user1.id, prompt: "test prompt", rounds: [0], effects: [[0]], responses: "do stuff", simulation: "0"}
+const expected_data = {user: user1.id, prompt: "test prompt", rounds: [0], effects: [[0]], responses: "do stuff", simulation: "0"}
 
 beforeEach(() => {
     mockInsert.mockClear();
-    mockUpdate.mockClear();
+    mockReplace.mockClear();
     mockDelete.mockClear();
 });
 
 afterAll(() => {
     // Unmock SimObj
-    SimObj.default = SimObjImpl;
+    MongoConn.default = MongoConnImpl;
 });
 
 
 test("Frame successfully initiates and returns frame_id", done => {
     async function test() {
         try {
-            let testFrame = new Frame(mock_user, mockSim, "test Prompt", ["first", "second"], [1,2,3]);
-            await testFrame.init_frame(userCanModify, mockId);
+            let testFrame = new Frame();
+            await testFrame.init_frame(user1, mockId);
             expect(mockInsert).toHaveBeenCalledTimes(1);
-            expect(mockInsert.mock.calls[0][0]).toEqual(childJsonObject);
-            expect(mockInsert.mock.calls[0][1]).toEqual(childTablename);
-            expect(mockInsert).toEqual(mockId);
+        } catch (e) {
+            console.log(e.stack);
+            done.fail();
         } finally {
             done();
         }
@@ -65,12 +56,14 @@ test("Frame successfully initiates and returns frame_id", done => {
 test("Frame successfully modifies a frame", done => {
     async function test() {
         try {
-            let testFrame = new Frame(mock_user, mockSim, "test Prompt", ["first", "second"], [1,2,3]);
-            await testFrame.modify_frame(userCanModify, mockData, mockId);
-            expect(mockUpdate.mock.calls[0][0]).toEqual({id: mockId});
-            expect(mockUpdate.mock.calls[0][1]).toEqual(childJsonObject);
-            expect(mockUpdate.mock.calls[0][2]).toEqual(childTablename);
-            await expect(testFrame.modify_frame(userCannotModify)).rejects.toThrow(Error);
+            await new Frame().modify_frame(user1, mock_data);
+            expect(mockReplace).toHaveBeenCalledTimes(1);
+            expect(mockReplace.mock.calls[0][0]).toEqual({id: mockId});
+            expect(mockReplace.mock.calls[0][1]).toEqual(expected_data);
+            await expect(new Frame().modify_frame(user2, mock_data)).rejects.toThrow(Error);
+        } catch (e) {
+            console.log(e.stack);
+            done.fail();
         } finally {
             done();
         }
@@ -81,16 +74,13 @@ test("Frame successfully modifies a frame", done => {
 test("Frame successfully deletes a frame", done => {
     async function test() {
         try {
-            let testFrame = new Frame(mock_user, mockSim, "test Prompt", ["first", "second"], [1,2,3]);
-            await testFrame.delete_frame(userCanModify, mockData, mockId);
+            await new Frame().delete(user1, mockId);
+            expect(mockDelete).toHaveBeenCalledTimes(1);
             expect(mockDelete.mock.calls[0][0]).toEqual({id: mockId});
-            expect(mockDelete.mock.calls[0][1]).tobeNull();
-            expect(mockDelete.mock.calls[0][2]).tobeNull();
-            await expect(testFrame.delete_frame(userCannotModify)).rejects.toThrow(Error);
+            await expect(new Frame().delete_frame(user2)).rejects.toThrow(Error);
         } finally {
             done();
         }
     }
     test();
 });
-

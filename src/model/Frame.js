@@ -1,31 +1,11 @@
 import SimObj from "./SimObj.js";
 
 export default class Frame extends SimObj {
-    
     tablename = "Frame";
-
-    /** Constructor for creating Frames
-     * @param  {model.User} owner The user that owns the frame
-     * @param  {model.Simulation} simulation The simulation
-     * @param  {String} prompt the prompt being presented in the Frame
-     * @param  {String, Effect} effects The name and Effect of the effects that will occur in frame
-     * @param  {String[]} responses The array of user responses
-     * @param  {Int[]} rounds The array of rounds leading to current round
-     * @returns {model.Frame} Returns an new instance of Frame
-     */
-    Frame (owner, simulation, prompt, effects, responses, rounds) {
-        this.owner = owner;
-        this.simulation = simulation;
-        this.prompt = prompt;
-        this.effects = effects;
-        this.responses = responses;
-        this.rounds = rounds;
-        return this;
-    }
 
     async toJsonObject() {
         return {
-            owner: this.owner,
+            user: this.user,
             simulation: this.simulation,
             prompt: this.prompt,
             effects: this.effects,
@@ -35,13 +15,13 @@ export default class Frame extends SimObj {
     }
 
     async fromJsonObject(jsonObj) {
-        this.owner = jsonObj.owner;
+        this.id = jsonObj.id;
+        this.user = jsonObj.user;
         this.simulation = jsonObj.simulation;
         this.prompt = jsonObj.prompt;
         this.effects = jsonObj.effects;
         this.responses = jsonObj.responses;
         this.rounds = jsonObj.rounds;
-        await this.select();
         return this;
     }
 
@@ -51,11 +31,8 @@ export default class Frame extends SimObj {
     *   @returns {String} the id of the new frame
     */
     async init_frame(user, sim_id) {
-
-        this.user = user;
-
-        this.simulation_id = sim_id;
-
+        this.user = user.id;
+        this.simulation = sim_id;
         this.id = await this.insert();
         
         return this.id;
@@ -66,27 +43,22 @@ export default class Frame extends SimObj {
     *   @param {Object} frame_data the object of the frame being modified
     *   @param {String} frame_id the id of the affected frame
     */
-    async modify_frame(user, frame_data, frame_id) {
-
-        this.frame_id = frame_id;
-        await this.select();
-
-        this.frame_data = frame_data;  
-        await this.update(user);
-
+    async modify_frame(user, frame_data) {
+        await this.fromJsonObject(frame_data);
+        await this.replace(user);
     }
 
     /** Delete a frame 
     *   @param {model.User} user The user deleting this Frame
-    *   @param {Object} frame_data the object of the frame being deleted
     *   @param {String} frame_id the id of the frame being deleted
     */
-    async delete_frame(user, frame_data, frame_id) {
-
+    async delete_frame(user, frame_id) {
         this.id = frame_id;
-        await this.select();
-
-        this.frame_data = frame_data;          
         await this.delete(user);
+    }
+
+    // A frame can only be modified by it's owner
+    async modifyableBy(user) {
+        return user.id == this.user;
     }
 }
