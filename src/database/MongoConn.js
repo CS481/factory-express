@@ -82,7 +82,7 @@ export default class MongoConn extends IDBConn {
         _mongoize(queryObj);
         _mongoize(updatesObj);
         let collection = this._get_collection(table);
-        collection.updateOne(queryObj, {$set: updatesObj});
+        return collection.updateOne(queryObj, {$set: updatesObj});
     }
 
     /**
@@ -97,7 +97,7 @@ export default class MongoConn extends IDBConn {
         _mongoize(queryObj);
         _mongoize(replaceObj);
         let collection = this._get_collection(table);
-        collection.replaceOne(queryObj, replaceObj);
+        return collection.replaceOne(queryObj, replaceObj);
     }
 
     /**
@@ -152,10 +152,10 @@ export default class MongoConn extends IDBConn {
      * @returns Promise that resolves when the mongoclient is connected
      */
     static async _connected() {
-        // Wait for 1/10th of a second until the client has connected
+        // Wait for 1/5th of a second until the client has connected
         while(!MongoConn._client.isConnected()) {
             console.log("Waiting for client to connect...");
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 200));
         }
         return;
     }
