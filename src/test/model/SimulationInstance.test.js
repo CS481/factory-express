@@ -1,41 +1,37 @@
 import * as MongoConn from "../../database/MongoConn.js";
+import Simulation from "../../model/Simulation.js";
 import SimulationInstance from "../../model/SimulationInstance.js";
 import User from "../../model/User.js"
 
+const user1 = new User();
+user1.id = "Can modify";
+const user2 = new User();
+user2.id = "Cannot modify";
+const mockId = "1234";
+const mockSim = new Simulation();
+const mock_sim_data = {id: mockId, user: user1.id, response_timeout: 0, resources: ["UwU"], name: "test sim"};
+const mock_instance = {simulation: mockSim, players: [user1, user2], responses: ["oh", "no"], deadline: 10, turn_number: 5, resources: ["UwU"]};
+
 // MongoConn mock
 const MongoConnImpl = MongoConn.default; // Save the unmocked copy
-const mockId = "1234";
+
 const mockInsert = jest.fn(() => mockId);
-const mockSelectResult = {color: "green", id: mockId};
-const mockSelectOne = jest.fn(() => {return mockSelectResult});
+const mockSelectResult = {user: user1, id: mockId};
 const mockUpdate = jest.fn();
-const mockReplace = jest.fn();
-const mockDelete = jest.fn();
+const mockSelectOne = jest.fn(() => mockSelectResult);
 MongoConn.default = jest.fn(() => {
     return {
         insert: mockInsert,
-        selectOne: mockSelectOne,
         update: mockUpdate,
-        replace: mockReplace,
-        delete: mockDelete
+        selectOne: mockSelectOne,
     }
 });
 
-const mockResponse = "yes";
-const mock_user1 = new User();
-mock_user1.username = "me";
-mock_user1.password = "you";
-const mock_user2 = new User();
-mock_user2.username = "foo";
-mock_user2.password = "bar";
-
-const mock_players = [mock_user1, mock_user2];
-const mock_responses = ["yes", "no"];
-const mock_deadline = 10;
-const mock_turnNumber = 5;
 
 beforeEach(() => {
     mockInsert.mockClear();
+    mockUpdate.mockClear();
+    mockSelectOne.mockClear();
 });
 
 afterAll(() => {
@@ -43,15 +39,13 @@ afterAll(() => {
     MongoConn.default = MongoConnImpl;
 });
 
-
 test("SimulationInstance successfully submits user response", done => {
     async function test() {
         try {
             let simInstanceTest = new SimulationInstance();
-            await simInstanceTest.fromJsonObject({users: mock_players, responses: mock_responses, deadline: mock_deadline, turn_number: mock_turnNumber});
-            await simInstanceTest.submit_response(mock_user1, mockResponse);
+            await simInstanceTest.fromJsonObject(mock_instance);
+            await simInstanceTest.submit_response(user1, ["yes"]);
             expect(mockInsert).toHaveBeenCalledTimes(1);
-            expect(mockInsert).toEqual("yes");
         } catch (e) {
             console.log(e.stack);
             done.fail();
@@ -66,9 +60,9 @@ test("SimulationInstance successfully gets the current turn number for the user"
     async function test() {
         try{
             let simInstanceTest = new SimulationInstance();
-            await simInstanceTest.fromJsonObject({users: mock_players, responses: mock_responses, deadline: mock_deadline, turn_number: mock_turnNumber});
-            await currentTurn.getCurrentTurn(mock_user1, mockId);
-            expect(currentTurn.turn_number).toEqual(5);
+            await simInstanceTest.fromJsonObject(mock_instance);
+            let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
+            expect(curTurn).toEqual(5);
         } catch (e) {
             console.log(e.stack);
             done.fail();
@@ -83,9 +77,10 @@ test("Simulation successfully begins (sets turn_number to 0)", done => {
     async function test() {
         try {
             let simInstanceTest = new SimulationInstance();
-            await simInstanceTest.fromJsonObject({users: mock_players, responses: mock_responses, deadline: mock_deadline, turn_number: mock_turnNumber});
-            await currentTurn.begin_sim(mock_user1);
-            expect(currentTurn.turn_number).toEqual(0);
+            await simInstanceTest.fromJsonObject(mock_instance);
+            await simInstanceTest.begin_sim(user1);
+            let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
+            expect(curTurn).toEqual(0);
         }  catch (e) {
             console.log(e.stack);
             done.fail();
