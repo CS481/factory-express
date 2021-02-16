@@ -43,6 +43,7 @@ test("Frame successfully initiates and returns frame_id", done => {
             let testFrame = new Frame();
             await testFrame.init_frame(user1, mockId);
             expect(mockInsert).toHaveBeenCalledTimes(1);
+            await expect(new Frame().init_frame(user2, mockId)).rejects.toThrow(Error);
         } catch (e) {
             console.log(e.stack);
             done.fail();
@@ -77,7 +78,7 @@ test("Frame successfully deletes a frame", done => {
             await new Frame().delete(user1, mockId);
             expect(mockDelete).toHaveBeenCalledTimes(1);
             expect(mockDelete.mock.calls[0][0]).toEqual({id: mockId});
-            await expect(new Frame().delete_frame(user2)).rejects.toThrow(Error);
+            await expect(new Frame().delete_frame(user2, mockId)).rejects.toThrow(Error);
         } finally {
             done();
         }

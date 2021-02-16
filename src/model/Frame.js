@@ -1,4 +1,5 @@
 import SimObj from "./SimObj.js";
+import User from "./User.js"
 
 export default class Frame extends SimObj {
     tablename = "Frame";
@@ -59,6 +60,8 @@ export default class Frame extends SimObj {
 
     // A frame can only be modified by it's owner
     async modifyableBy(user) {
-        return user.id == this.user;
+        let testUser = User();
+        testUser = await this.user;
+        return user.id == testUser.id;
     }
 }
