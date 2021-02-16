@@ -1,6 +1,6 @@
 import express from 'express';
 import ServerException from './exception/ServerException.js';
-import UnimplementedError from './exception/UnimplementedError.js';
+import InternalError from './exception/InternalError.js';
 import UnprocessableError from "./exception/UnprocessableError.js";
 
 export default class Router {
@@ -67,8 +67,8 @@ export default class Router {
             if (e instanceof ServerException) {
                 e.setResponse(res);
             } else {
-                new UnimplementedError(e).setResponse(res);
-                console.trace(e.message);
+                new InternalError(e).setResponse(res);
+                console.trace(e);
             }
         }
     }

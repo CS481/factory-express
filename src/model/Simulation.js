@@ -5,21 +5,19 @@ export default class Simulation extends SimObj {
     tablename = "Simulation";
 
     async toJsonObject() {
-        return {
-            user: this.user,
+        let obj = {
             name: this.name,
             response_timeout: this.response_timeout,
-            resources: this.resources
-        }
-    }
-
-    async fromJsonObject(jsonObj) {
-        this.id = jsonObj.id;
-        this.user = jsonObj.user;
-        this.name = jsonObj.name;
-        this.response_timeout = jsonObj.response_timeout; //fetched from db or set 
-        this.resources = jsonObj.resources;
-        return this;
+            resources: this.resources,
+            user: this.user,
+            id: this.id
+        };
+        Object.keys(obj).map((key, _) => {
+            if (obj[key] == undefined) {
+                delete obj[key];
+            }
+        });
+        return obj;
     }
 
     /**  Initialize a sim and return its ID
@@ -38,12 +36,12 @@ export default class Simulation extends SimObj {
             rounds: [-1], 
             responses: [],
             id: frame_id,
-            user: user.id
+            user: user.id,
+            simulation: sim_id
         };
         await frame.modify_frame(user, default_end_frame);
         return sim_id;
     };
-
 
     /** Modifies an existing simulation
     *   @param {model.User} The user to modify the frame
@@ -51,12 +49,16 @@ export default class Simulation extends SimObj {
     *   @param {String} sim_id is the id of the simulation to modifiy
     */
     async modify_sim(user, sim_data) {
-        this.fromJsonObject(sim_data)
+        this.id = sim_data.id;
+        await this.select(); // Fetch the user id, so we can validate modifyableBy
+
+        delete sim_data.user;
+        this.fromJsonObject(sim_data);
         await this.replace(user);
     };
 
     // A Simulation can only be modified by it's owner
-    async modifyableBy(user) { 
+    async modifyableBy(user) {
         return user.id == this.user;
     }
 };

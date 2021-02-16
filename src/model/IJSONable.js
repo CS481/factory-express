@@ -20,12 +20,16 @@ export default class IJSONable {
      * @param {object} jsonObj The json object to convert from
      * @returns {IJSONable} A new instance of this class 
      */
-    async fromJsonObject(jsonObj) { throw new UnimplementedError(); }
+    async fromJsonObject(jsonObj) {
+        Object.keys(jsonObj).map((key, _) => {
+            this[key] = jsonObj[key];
+        }); 
+    }
 
     /**
      * Deserializes a json string to an instance of this class
      * @param {String} json The json string to deserialize
      * @returns {IJSONable} A new instance of this class 
      */
-    async fromJson(json) { console.log(json);return this.fromJsonObject(JSON.parse(json)); }
+    async fromJson(json) { return this.fromJsonObject(JSON.parse(json)); }
 }

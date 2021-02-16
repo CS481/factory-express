@@ -1,8 +1,8 @@
 import DBConnFactory from "../database/DBConnFactory.js";
 import IJSONable from "./IJSONable.js";
+import ForbiddenError from "../exception/ForbiddenError.js";
 
 export default class SimObj extends IJSONable {
-    id = "";
     tablename = "";
 
     /**
@@ -25,7 +25,7 @@ export default class SimObj extends IJSONable {
      * @throws If id is already set
      */
     async insert() {
-        if (this.id != "") {
+        if (this.id != undefined) {
             throw new Error(`Cannot insert new SimObj because id already set to ${this.id}`);
         }
         let conn = DBConnFactory();
@@ -40,7 +40,7 @@ export default class SimObj extends IJSONable {
      */
     async update(user) {
         if (!(await this.modifyableBy(user))) {
-            throw new Error("This user does not have permissions to update this SimObj");
+            throw new ForbiddenError("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
         conn.update({id: this.id}, await this.toJsonObject(), this.tablename);
@@ -53,20 +53,20 @@ export default class SimObj extends IJSONable {
      */
     async replace(user) {
         if (!(await this.modifyableBy(user))) {
-            throw new Error("This user does not have permissions to update this SimObj");
+            throw new ForbiddenError("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
         conn.replace({id: this.id}, await this.toJsonObject(), this.tablename);
     }
 
-     /**
+    /**
      * Deletes this SimObj in the database
      * @param {model.User} user The user deleting this SimObj
      * @throws If user does not have permission to delete this object
      */
     async delete(user) {
         if (!(await this.modifyableBy(user))) {
-            throw new Error("This user does not have permissions to update this SimObj");
+            throw new ForbiddenError("This user does not have permissions to update this SimObj");
         }
         let conn = DBConnFactory();
         conn.delete({id: this.id}, await this.toJsonObject(), this.tablename);    

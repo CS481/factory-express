@@ -4,25 +4,20 @@ export default class Frame extends SimObj {
     tablename = "Frame";
 
     async toJsonObject() {
-        return {
+        let obj = {
             user: this.user,
             simulation: this.simulation,
             prompt: this.prompt,
             effects: this.effects,
             responses: this.responses,
             rounds: this.rounds
-        }
-    }
-
-    async fromJsonObject(jsonObj) {
-        this.id = jsonObj.id;
-        this.user = jsonObj.user;
-        this.simulation = jsonObj.simulation;
-        this.prompt = jsonObj.prompt;
-        this.effects = jsonObj.effects;
-        this.responses = jsonObj.responses;
-        this.rounds = jsonObj.rounds;
-        return this;
+        };
+        Object.keys(obj).map((key, _) => {
+            if (obj[key] == undefined) {
+                delete obj[key];
+            }
+        });
+        return obj;
     }
 
     /** Initialize a frame and return its ID
@@ -44,6 +39,9 @@ export default class Frame extends SimObj {
     *   @param {String} frame_id the id of the affected frame
     */
     async modify_frame(user, frame_data) {
+        this.id = frame_data.id;
+        await this.select();
+
         await this.fromJsonObject(frame_data);
         await this.replace(user);
     }
@@ -54,6 +52,7 @@ export default class Frame extends SimObj {
     */
     async delete_frame(user, frame_id) {
         this.id = frame_id;
+        await this.select();
         await this.delete(user);
     }
 

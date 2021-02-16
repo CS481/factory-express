@@ -9,6 +9,11 @@ import Router from "./Router.js";
 // Imports for side effects
 import CreateAccount from "./routes/CreateAccount.js";
 import VerifyCredentials from "./routes/VerifyCredentials.js";
+import InitializeSim from "./routes/InitializeSim.js";
+import SimulationModification from "./routes/SimulationModification.js";
+import InitializeFrame from "./routes/InitializeFrame.js";
+import FrameModification from "./routes/FrameModification.js";
+import DeleteFrame from "./routes/DeleteFrame.js";
 
 var app = express();
 

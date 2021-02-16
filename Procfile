@@ -1,1 +1,1 @@
-sim_factory: node bin/www.js
+sim_factory: node --experimental-json-modules bin/www.js

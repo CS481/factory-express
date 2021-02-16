@@ -62,7 +62,7 @@ export default class User extends SimObj {
      */
     async select() {
         let conn = DBConnFactory();
-        let result = await conn.selectOne(this.toJsonObject(), this.tablename);
+        let result = await conn.selectOne(await this.toJsonObject(), this.tablename);
         if (result == null) {
             throw new Error("The requested SimObj cannot be found in the database");
         }

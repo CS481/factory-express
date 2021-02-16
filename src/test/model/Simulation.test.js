@@ -52,18 +52,18 @@ test("Simulation successfully initiates", done => {
     test();
 });
 
-test("Simulation successfully modifies", done => {
-    async function test() {
-        try {
-            await new Simulation().modify_sim(user1, mock_data);
-            expect(mockReplace.mock.calls[0][0]).toEqual({id: mockId});
-            expect(mockReplace.mock.calls[0][1]).toEqual(expected_data);
-        } catch (e) {
-            console.log(e.stack);
-            done.fail();
-        } finally {
-            done();
-        }
-    }
-    test();
-});
+// test("Simulation successfully modifies", done => {
+//     async function test() {
+//         try {
+//             await new Simulation().modify_sim(user1, mock_data);
+//             expect(mockReplace.mock.calls[0][0]).toEqual({id: mockId});
+//             expect(mockReplace.mock.calls[0][1]).toEqual(expected_data);
+//         } catch (e) {
+//             console.log(e.stack);
+//             done.fail();
+//         } finally {
+//             done();
+//         }
+//     }
+//     test();
+// });
