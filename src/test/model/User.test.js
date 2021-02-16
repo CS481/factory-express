@@ -1,6 +1,6 @@
 import * as MongoConn from "../../database/MongoConn.js";
 import User from "../../model/User.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // MongoConn mock
 const MongoConnImpl = MongoConn.default; // Save the unmocked copy
