@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "./start.sh",
-    "test": "./test.sh"
+    "test": "./test.sh",
+    "zip": "git archive -o simulation-factory.zip HEAD"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
