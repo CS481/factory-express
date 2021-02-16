@@ -53,7 +53,6 @@ export default class User extends SimObj {
     async toDatabaseRecord() {
         let record = await this.toJsonObject();
         record.password = await bcrypt.hash(this.password, (Number)(process.env.BCRYPT_ROUNDS));
-        console.log(record);
         return record;
     }
 
@@ -73,7 +72,7 @@ export default class User extends SimObj {
      * Override the insert() function of SimObj
      */
     async insert() {
-        if (this.id != "") {
+        if (this.id != undefined) {
             throw new Error(`Cannot insert new SimObj because id already set to ${this.id}`);
         }
         let conn = DBConnFactory();

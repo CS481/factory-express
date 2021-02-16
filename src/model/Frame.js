@@ -10,7 +10,8 @@ export default class Frame extends SimObj {
             prompt: this.prompt,
             effects: this.effects,
             responses: this.responses,
-            rounds: this.rounds
+            rounds: this.rounds,
+            id: this.id
         };
         Object.keys(obj).map((key, _) => {
             if (obj[key] == undefined) {
@@ -41,7 +42,6 @@ export default class Frame extends SimObj {
     async modify_frame(user, frame_data) {
         this.id = frame_data.id;
         await this.select();
-
         await this.fromJsonObject(frame_data);
         await this.replace(user);
     }
