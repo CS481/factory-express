@@ -59,6 +59,19 @@ export default class SimObj extends IJSONable {
         conn.replace({id: this.id}, await this.toJsonObject(), this.tablename);
     }
 
+     /**
+     * Deletes this SimObj in the database
+     * @param {model.User} user The user deleting this SimObj
+     * @throws If user does not have permission to delete this object
+     */
+    async delete(user) {
+        if (!(await this.modifyableBy(user))) {
+            throw new Error("This user does not have permissions to update this SimObj");
+        }
+        let conn = DBConnFactory();
+        conn.delete({id: this.id}, await this.toJsonObject(), this.tablename);    
+    }
+
     /**
      * Returns whether or not this SimObj can be modified by user
      * @param {mode.User} user The user trying to modify this SimObj

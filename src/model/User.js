@@ -1,6 +1,6 @@
 import SimObj from "./SimObj.js";
 import DBConnFactory from "../database/DBConnFactory.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import UnauthorizedError from "../exception/UnauthorizedError.js"
 import UnprocessableError from "../exception/UnprocessableError.js";
 
