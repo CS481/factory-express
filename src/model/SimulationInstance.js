@@ -6,6 +6,7 @@ export default class SimulationInstance extends SimObj {
 
     async toJsonObject() {
         return {
+            simulation: this.simulation,
             players: this.players,
             responses: this.responses,
             deadline: this.deadline,
@@ -15,6 +16,7 @@ export default class SimulationInstance extends SimObj {
     }
 
     async fromJsonObject(jsonObj) {
+        this.simulation = jsonObj.simulation;
         this.players = jsonObj.players;
         this.responses = jsonObj.responses;
         this.deadline = jsonObj.deadline;
@@ -39,7 +41,16 @@ export default class SimulationInstance extends SimObj {
      * @param  {String} string
      */
     async submit_response(user, response) {
-        this.user = user;
+        /* since we have an array of users (players), 
+        *   we need to set the players to the array that contains the user 
+        * Array.includes()
+        *      Determines whether the array contains a value, returning true or false as appropriate.
+        * 
+        * if (players array includes user) {set this.players = playerrs array containing user}
+        *    else {throw error that this user is not a player}
+        */
+        let players = await this.fromJsonObject(user);
+        this.players = {user: user};
         this.response = response;
 
         await this.insert();
@@ -51,12 +62,14 @@ export default class SimulationInstance extends SimObj {
      * @returns {Int} curTurn_number Turn_number Returns the current turn_number
      */
     async getCurrentTurn(user, simID) {
-        this.simID = simID;
+        this.sim_id = simID;
         // make array containing the user. Mongo should search for it. 
-        this.players =  user;
+        this.players = {user: user};
         await this.select();
-
-        return this.turn_number;
+        
+        await this.toJsonObject();
+        let curTurn = this.turn_number;
+        return curTurn;
     }
 
     /** Sets the turn_number round to 0 to begin the existing simulation
@@ -65,11 +78,15 @@ export default class SimulationInstance extends SimObj {
     async begin_sim(user) {
         // make arrray containing the user. Mongo should search for it. 
 
-        this.players =  user;
-        await this.select();
-        
+        this.players = {user: user};        
         this.turn_number = 0;
 
-        await this.update(this.user);
+        await this.update(user);
+    }
+
+    // A SimulationInstance can only be modified by it's owner
+    async modifyableBy(user) { 
+
+        return user.id == this.players[user];
     }
 }
