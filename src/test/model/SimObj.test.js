@@ -9,12 +9,14 @@ const mockSelectResult = {color: "green", id: mockId};
 const mockSelectOne = jest.fn(() => {return mockSelectResult});
 const mockUpdate = jest.fn();
 const mockReplace = jest.fn();
+const mockDelete = jest.fn();
 MongoConn.default = jest.fn(() => {
     return {
         insert: mockInsert,
         selectOne: mockSelectOne,
         update: mockUpdate,
-        replace: mockReplace
+        replace: mockReplace,
+        delete: mockDelete
     }
 });
 
@@ -46,6 +48,7 @@ beforeEach(() => {
     mockSelectOne.mockClear();
     mockUpdate.mockClear();
     mockReplace.mockClear();
+    mockDelete.mockClear();
 });
 
 afterAll(() => {
@@ -112,6 +115,36 @@ test("SimObj successfully replaces in database", done => {
             expect(mockReplace.mock.calls[0][1]).toEqual(childJsonObject);
             expect(mockReplace.mock.calls[0][2]).toEqual(childTablename);
             await expect(result.replace(userCannotModify)).rejects.toThrow(Error);
+        } finally {
+            done();
+        }
+    }
+    test();
+});
+
+test("SimObj successfully deletes from database", done => {
+    async function test() {
+        try {
+            // Need to insert an obj before deleting it. 
+            let result = new SimObjChild();
+            await result.insert();
+            expect(mockInsert).toHaveBeenCalledTimes(1);
+            expect(mockInsert.mock.calls[0][0]).toEqual(childJsonObject);
+            expect(mockInsert.mock.calls[0][1]).toEqual(childTablename);
+
+            // Now attempt to delete the entry.
+            await result.delete(userCanModify);
+            expect(mockDelete).toHaveBeenCalledTimes(1);
+            expect(mockDelete.mock.calls[0][0]).toEqual({id: mockId});
+            expect(mockDelete.mock.calls[0][1]).toEqual(childJsonObject);
+            expect(mockDelete.mock.calls[0][2]).toEqual(childTablename);
+
+            /*  TODO: check that the entry was deleted. 
+            *   THis would require making another select, but not using (or creating a new) the set mock for select. 
+            *   THe current mockSelectOne mocks the selection to be {"color": "green", "id": "1234"}
+            */
+
+            await expect(result.delete(userCannotModify)).rejects.toThrow(Error);
         } finally {
             done();
         }

@@ -14,22 +14,27 @@ const insertTable = "insert";
 let insertObj = {};
 const updatedObj = {"foo":"baz","num":42,"list":["hai",17.4],"subobj":{"foo":"baz"}};
 const replaceObj = {"some": "unrelated", "object": 1}
+const deleteObj = {"some": "unrelated", "object": 1};
 
 beforeAll(done => {
     async function before() {
         await client.connect();
+        await MongoConn._connected(); // Prevent the tests from timing out by preconnecting the MongoConn client
         done();
     };
     before();
 });
 
-afterAll(() => {
-    // async function after() {
-    // client.db(DB_NAME).collection(insertTable).deleteMany({});
+afterAll(done => {
+    async function after() {
+        await client.db(DB_NAME).collection(insertTable).deleteMany({});
 
-    // }
-    MongoConn._client.close();
-    client.close();
+        await MongoConn._client.close();
+        await client.close();
+
+        done();
+    }
+    after();
 });
 
 beforeEach(() => {
@@ -47,6 +52,9 @@ test("Successfully selects one object", done => {
             expect(await result).toMatchObject(expectedSelectResult);
             expect(await oneKey).toMatchObject({subobj: expectedSelectResult.subobj, id: expectedSelectResult.id});
             expect(await byId).toMatchObject(expectedSelectResult);
+        } catch (e) {
+            console.log(e.stack);
+            throw e;
         } finally {
             done();
         }
@@ -72,6 +80,9 @@ test("Successfully executes advanced queries", done => {
             cursor.forEach(result => {
                 expect(result.foo == "bar" || result.num == 42).toBe(true);
             });
+        } catch (e) {
+            console.log(e.stack);
+            throw e;
         } finally {
             done();
         }
@@ -86,6 +97,9 @@ test("Successfully inserts one object", done => {
             let findObj = {_id: mongodb.ObjectID(await id)};
             let result = await client.db(DB_NAME).collection(insertTable).findOne(findObj);
             expect(result).toMatchObject(insertObj);
+        }  catch (e) {
+            console.log(e.stack);
+            throw e;
         } finally {
             done();
         }
@@ -99,10 +113,13 @@ test("Successfully updates one object", done => {
             let response = await client.db(DB_NAME).collection(insertTable).insertOne(insertObj);
             let id = response.insertedId;
             await conn.update({id: id}, {"foo": "baz"}, insertTable);
-            let findObj = {_id: mongodb.ObjectID(await id)};
+            let findObj = {_id: mongodb.ObjectID(id)};
+            // await new Promise(resolve => setTimeout(resolve, 10000));
             let result = await client.db(DB_NAME).collection(insertTable).findOne(findObj);
-            // delete result._id;
             expect(result).toMatchObject(updatedObj);
+        }  catch (e) {
+            console.log(e.stack);
+            throw e;
         } finally {
             done();
         }
@@ -116,10 +133,36 @@ test("Successfully replaces one object", done => {
             let response = await client.db(DB_NAME).collection(insertTable).insertOne(insertObj);
             let id = response.insertedId;
             await conn.replace({id: String(id)}, replaceObj, insertTable);
-            let findObj = {_id: mongodb.ObjectID(await id)};
+            let findObj = {_id: mongodb.ObjectID(id)};
             let result = await client.db(DB_NAME).collection(insertTable).findOne(findObj);
             // delete result._id;
             expect(result).toMatchObject(replaceObj);
+        }  catch (e) {
+            console.log(e.stack);
+            throw e;
+        } finally {
+            done();
+        }
+    }
+    test();
+});
+
+test("Successfully deletes one object", done => {
+    async function test() {
+        try {
+            let response = await client.db(DB_NAME).collection(insertTable).insertOne(insertObj);
+            let id = response.insertedId;
+            await conn.delete({id: String(id)}, deleteObj, insertTable);
+            let findObj = {_id: mongodb.ObjectID(await id)};
+
+            // This should be null as the item should have been deleted
+            let result = await client.db(DB_NAME).collection(insertTable).findOne(findObj);
+
+            // delete result._id;
+            expect(result).toBeNull;
+        }  catch (e) {
+            console.log(e.stack);
+            throw e;
         } finally {
             done();
         }
