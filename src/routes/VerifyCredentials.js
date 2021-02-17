@@ -5,8 +5,8 @@ import VoidSchema from "../simulation-schema/js/Void.js";
 
 var router = new Router("VerifyCredentials", UserSchema, VoidSchema);
 router.post(async function(req) {
-    //await new User().fromJsonObject(req);
-    return {eyy: "Bois"};
+    await new User().fromJsonObject(req);
+    return {};
 });
 
 export default router;
