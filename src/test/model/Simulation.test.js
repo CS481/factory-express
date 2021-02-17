@@ -6,25 +6,29 @@ import User from "../../model/User.js";
 // MongoConn mock
 const MongoConnImpl = MongoConn.default; // Save the unmocked copy
 const mockId = "1234";
-const mockInsert = jest.fn(() => mockId);
-const mockReplace = jest.fn();
-MongoConn.default = jest.fn(() => {
-    return {
-        insert: mockInsert,
-        replace: mockReplace,
-    }
-});
-
 const user1 = new User();
 user1.id = "Can modify";
 const user2 = new User();
 user2.id = "Cannot modify";
+const mockInsert = jest.fn(() => mockId);
+const mockReplace = jest.fn();
+const mockSelectOne = jest.fn(() => ({user: user1.id}));
+MongoConn.default = jest.fn(() => {
+    return {
+        insert: mockInsert,
+        replace: mockReplace,
+        selectOne: mockSelectOne
+    }
+});
+
+
 const mock_data = {id: mockId, user: user1.id, response_timeout: 0, resources: ["UwU"], name: "test sim"};
 const expected_data = {user: user1.id, response_timeout: 0, resources: ["UwU"], name: "test sim"};
 
 beforeEach(() => {
     mockInsert.mockClear();
     mockReplace.mockClear();
+    mockSelectOne.mockClear();
 });
 
 afterAll(() => {

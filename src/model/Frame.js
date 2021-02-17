@@ -59,8 +59,6 @@ export default class Frame extends SimObj {
 
     // A frame can only be modified by it's owner
     async modifyableBy(user) {
-        let testUser = User();
-        testUser = await this.user;
-        return user.id == testUser.id;
+        return user.id == this.user;
     }
 }
