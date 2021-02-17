@@ -49,11 +49,14 @@ export default class SimulationInstance extends SimObj {
         * if (players array includes user) {set this.players = playerrs array containing user}
         *    else {throw error that this user is not a player}
         */
-        let players = await this.fromJsonObject(user);
-        this.players = {user: user};
-        this.response = response;
-
-        await this.insert();
+       let simInst = new SimulationInstance();
+       simInst = await this.toJsonObject();
+       if (simInst.players.includes(user)) {
+           this.response = response;
+           await this.insert();
+       } else {
+           throw new console.error("This user is not a player for this sim instance");
+       }
     }
 
     /** Gets the current turn ffor the selected user
@@ -64,12 +67,15 @@ export default class SimulationInstance extends SimObj {
     async getCurrentTurn(user, simID) {
         this.sim_id = simID;
         // make array containing the user. Mongo should search for it. 
-        this.players = {user: user};
-        await this.select();
-        
-        await this.toJsonObject();
-        let curTurn = this.turn_number;
-        return curTurn;
+        let simInst = new SimulationInstance();
+        simInst = await this.toJsonObject();
+        if (simInst.players.includes(user)) {
+            await this.select();
+            let curTurn = simInst.turn_number;
+            return curTurn;
+        } else {
+            throw new console.error("This user is not a player for this sim instance");
+        }
     }
 
     /** Sets the turn_number round to 0 to begin the existing simulation
@@ -78,15 +84,22 @@ export default class SimulationInstance extends SimObj {
     async begin_sim(user) {
         // make arrray containing the user. Mongo should search for it. 
 
-        this.players = {user: user};        
-        this.turn_number = 0;
-
-        await this.update(user);
+        let simInst = new SimulationInstance();
+        simInst = await this.toJsonObject();
+        if (simInst.players.includes(user)) {
+            simInst.turn_number = 0;
+            this.turn_number = simInst.turn_number;
+            await this.update(user);
+        } else {
+            throw new console.error("This user is not a player for this sim instance");
+        }
     }
 
     // A SimulationInstance can only be modified by it's owner
+    // this one still does not recognize the user no matter what i do. 
     async modifyableBy(user) { 
-
-        return user.id == this.players[user];
+        let simInst = new SimulationInstance();
+        simInst = await this.toJsonObject();
+        return simInst.players.includes(user);
     }
 }
