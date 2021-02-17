@@ -16,6 +16,7 @@ import FrameModification from "./routes/FrameModification.js";
 import DeleteFrame from "./routes/DeleteFrame.js";
 
 var app = express();
+console.log("APP, BITCH");
 
 // view engine setup
 app.set('views', './views');

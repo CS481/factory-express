@@ -9,6 +9,8 @@ import _debug from 'debug';
 var debug = _debug('factory-express:server');
 import http from 'http';
 
+console.log("hehe I am doin a runnin");
+
 /**
  * Get port from environment and store in Express.
  */

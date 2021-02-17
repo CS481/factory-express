@@ -6,7 +6,7 @@
   "scripts": {
     "start": "./start.sh",
     "test": "./test.sh",
-    "zip": "git archive -o simulation-factory.zip HEAD"
+    "zip": "./aws_zip.sh"
   },
   "dependencies": {
     "ajv": "^6.12.6",
