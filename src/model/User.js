@@ -51,7 +51,7 @@ export default class User extends SimObj {
      * Returns a json object that can be stored in the database
      */
     async toDatabaseRecord() {
-        let record = this.toJsonObject();
+        let record = await this.toJsonObject();
         record.password = await bcrypt.hash(this.password, (Number)(process.env.BCRYPT_ROUNDS));
         return record;
     }
@@ -61,7 +61,7 @@ export default class User extends SimObj {
      */
     async select() {
         let conn = DBConnFactory();
-        let result = await conn.selectOne(this.toJsonObject(), this.tablename);
+        let result = await conn.selectOne(await this.toJsonObject(), this.tablename);
         if (result == null) {
             throw new Error("The requested SimObj cannot be found in the database");
         }
@@ -72,7 +72,7 @@ export default class User extends SimObj {
      * Override the insert() function of SimObj
      */
     async insert() {
-        if (this.id != "") {
+        if (this.id != undefined) {
             throw new Error(`Cannot insert new SimObj because id already set to ${this.id}`);
         }
         let conn = DBConnFactory();

@@ -1,0 +1,3 @@
+[submodule "src/simulation-schema"]
+	path = src/simulation-schema
+	url = https://github.com/CS481/simulation-schema.git

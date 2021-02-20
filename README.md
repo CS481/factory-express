@@ -11,3 +11,4 @@ Note that error messages will correspond to automatically generated test files i
 To deploy on AWS, first make sure you have used git to commit your most recent changes.
 Then, execute `npm run zip`. This script generates a zipfile named `factory-express.zip` in the root folder of the project.
 Login to aws, navigate to the Simulationfactory elastic beanstalk environment, and upload this zipfile.
+On windows, you will need to install a zip program for this to work. I use [gow](https://github.com/bmatzelle/gow)

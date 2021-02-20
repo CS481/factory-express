@@ -6,11 +6,13 @@
   "scripts": {
     "start": "./start.sh",
     "test": "./test.sh",
-    "zip": "git archive -o simulation-factory.zip HEAD"
+    "zip": "./aws_zip.sh"
   },
   "dependencies": {
+    "ajv": "^6.12.6",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
