@@ -19,7 +19,7 @@ to_json = partial(json.dumps, indent=2, sort_keys=True)
 def post(resource, data, message="Posting"): 
     json_data = to_json(data)
     print(f'{message} with the following data:\n{json_data}')
-    response = requests.post(f'http://{host}/{resource}', data=json_data)
+    response = requests.post(f'http://{host}/{resource}', json=data)
     if (response.status_code != 200):
         raise Exception(f'Failed to post! Status code {response.status_code}')
     else:
@@ -39,15 +39,15 @@ def num_range(start, stop, step):
 def main():
     num_chars=16
     username = random_string(num_chars)
-    password = random_string(num_chars)
+    password = random_string(num_chars)  + "&3aM"
     user = {"username": username, "password": password}
-    post('CreateUser', user, 'Creating user')
+    post('CreateAccount', user, 'Creating user')
 
     result = post('SimulationInitialization', user, 'Initializing sim')
     sim_id = result['id']
 
     resource_dict = {'infected': 1000.0, 'sacrificers': 50.0, 'food': 200.0}
-    sim_modification = {'simulation_id': sim_id, 'user': user, 'name': "Zombie survival",
+    sim_modification = {'id': sim_id, 'user': user, 'name': "Zombie survival",
                         'resources': resource_dict, 'response_timeout': 180}
     post('SimulationModification', sim_modification, "Modifying sim")
 
@@ -78,7 +78,7 @@ def main():
         }
     ]
 
-    frame_modification = {'frame_id': frame_id, 'user': user,
+    frame_modification = {'id': frame_id, 'user': user,
                           'rounds': [0],
                           'prompt': "You are the leader of a small country that is experiencing a zombie outbreak. "
                                     "There are ${resources.infected} infected, and you have ${resources.food} days of food stockpiled. "
@@ -108,7 +108,7 @@ def main():
             'effects': [[0]]
         }
     ]
-    frame_modification = {'frame_id': frame_id, 'user': user,
+    frame_modification = {'id': frame_id, 'user': user,
                           'rounds': [1],
                           'prompt': "Oh no! A small cult has arisen. They believe that sacrificing healthy individuals "
                                     "to the zombie hordes will appease their god.",
@@ -119,7 +119,7 @@ def main():
     result = post('FrameInitialization', frame_initialization, "Initializing frame")
     frame_id = result['id']
 
-    frame_modification = {'frame_id': frame_id, 'user': user,
+    frame_modification = {'id': frame_id, 'user': user,
                           'rounds': [2],
                           'prompt': "You are the leader of a small country that is experiencing a zombie outbreak. "
                                     "There are ${resources.infected} infected, and you have ${resources.food} days of food stockpiled. "

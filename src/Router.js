@@ -65,10 +65,11 @@ export default class Router {
             res.send(await func(req.body));
         } catch (e) {
             if (e instanceof ServerException) {
+                console.trace(e);
                 e.setResponse(res);
             } else {
-                new InternalError(e).setResponse(res);
                 console.trace(e);
+                new InternalError(e).setResponse(res);
             }
         }
     }

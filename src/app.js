@@ -2,6 +2,7 @@ import createError from 'http-errors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import cors from 'cors';
 
 import indexRouter from './routes/index.js';
 import Router from "./Router.js";
@@ -9,13 +10,14 @@ import Router from "./Router.js";
 // Imports for side effects
 import CreateAccount from "./routes/CreateAccount.js";
 import VerifyCredentials from "./routes/VerifyCredentials.js";
-import InitializeSim from "./routes/InitializeSim.js";
+import SimulationInitialization from "./routes/SimulationInitialization.js";
 import SimulationModification from "./routes/SimulationModification.js";
-import InitializeFrame from "./routes/InitializeFrame.js";
+import FrameInitialization from "./routes/FrameInitialization.js";
 import FrameModification from "./routes/FrameModification.js";
 import DeleteFrame from "./routes/DeleteFrame.js";
 
 var app = express();
+app.use(cors()); // Enable all CORS requests
 
 // view engine setup
 app.set('views', './views');

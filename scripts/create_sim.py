@@ -43,7 +43,7 @@ def main():
     user = {"username": username, "password": password}
     post('CreateAccount', user, 'Creating user')
 
-    result = post('InitializeSim', user, 'Initializing sim')
+    result = post('SimulationInitialization', user, 'Initializing sim')
     sim_id = result['id']
 
     resource_dict = {'player1_cash': 250000.0, 'player2_cash': 250000.0, 'environment': 500000.0}
@@ -52,7 +52,7 @@ def main():
     post('SimulationModification', sim_modification, "Modifying sim")
 
     frame_initialization = {'id': sim_id, 'user': user}
-    result = post('InitializeFrame', frame_initialization, "Initializing frame")
+    result = post('FrameInitialization', frame_initialization, "Initializing frame")
     frame_id = result['id']
 
     effects_dict = {'player1_cash': [num_range(0, -6, -1), num_range(2, -4, -1), num_range(4, -2, -1),
