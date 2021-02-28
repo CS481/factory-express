@@ -6,13 +6,14 @@ import UserResponse from "../simulation-schema/js/UserResponse.js";
 import IdRequest from "../simulation-schema/js/IdRequest.js";
 import IdResponse from '../simulation-schema/js/IdResponse.js';
 
-var router = new Router("SubmitReponse", UserResponse, State);
+var router = new Router("SubmitReponse", UserResponse, Void);
 router.post(async function(req) {
     let user = await new User().fromJsonObject(req.user);
     delete req.user; // Remove user from the message so we don't override it
-    let simulation = new Simulation();
-    let State = await simulation.getState();
-    return {State: State}; 
+    await new SimulationInstance().submit_response(user, req);
+    //let simulation = new Simulation();
+    //let State = await simulation.getState();
+    return {}; 
 
 });
 

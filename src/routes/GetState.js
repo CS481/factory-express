@@ -22,7 +22,7 @@ router.post(async function(req) {
             prompt: "prompt",
             responses: "responses"
     }
-    return {State: State}; 
+    return {State}; 
 });
 
 export default router;
