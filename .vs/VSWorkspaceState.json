@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.metadata",
+    "\\bin",
+    "\\scripts",
+    "\\src",
+    "\\src\\database",
+    "\\src\\model",
+    "\\src\\routes"
+  ],
+  "PreviewInSolutionExplorer": false
+}
