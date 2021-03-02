@@ -1,39 +1,62 @@
 import SimObj from "./SimObj.js";
 import State from "./State.js"
+import StateHistory from "./StateHistory.js";
+import UserHistory from "./UserHistory.js";
 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
 
     async toJsonObject() {
-        return {
+        let obj = {
             simulation: this.simulation,
             players: this.players,
             responses: this.responses,
             deadline: this.deadline,
             turn_number: this.turn_number,
-            resources: this.resources
-        }
+            resources: this.resources,
+            player_responses: this.player_responses
+        };
+        Object.keys(obj).map((key, _) => {
+            if (obj[key] == undefined) {
+                delete obj[key];
+            }
+        });
+        return obj;
     }
-
-    async fromJsonObject(jsonObj) {
-        this.simulation = jsonObj.simulation;
-        this.players = jsonObj.players;
-        this.responses = jsonObj.responses;
-        this.deadline = jsonObj.deadline;
-        this.turn_number = jsonObj.turn_number;
-        this.resources = jsonObj.resources;
-        return this;
-    }
-
 
     // Need to import State once implemented
     /** Get the state of the Simulation
      * @returns {model.State} Returns the state of the simulaiton
      */ 
-    async getState() { 
+    async getState(user, simulation_id) {
+        this.simulation = simulation_id;
+        this.player_responses = [new UserHistory()];
+        this.player_responses[0].user = user.id;
+        let instances = await this.selectMany();
+        // Sort the instances in reverse order of the turn numbers
+        instances.sort((lhs, rhs) => rhs.turn_number - lhs.turn_number);
         let state =  new State();
-        this.state = state;
-        return this.State;
+        await state.fromJsonObject(instances[0]);
+        state.history = await Promise.all(instances.map(async instance => {
+            let sim_instance = await new SimulationInstance().fromJsonObject(instance);
+            return sim_instance.getStateHistory();
+        }));
+        state.user_waiting = true;
+        state.history[0].user_history.forEach(u_his => {
+            // Set user_waiting to false if user_waiting is already false, or if this user has not submitted a response yet
+            state.user_waiting = !(!state.user_waiting || (u_his.user == user.id && u_his.response == ""));
+        });
+        return state;
+    }
+
+    /**
+     * Get the StateHistory object that represents this SimulationInstance
+     * @returns {model.StateHistory}
+     */
+    async getStateHistory() {
+        let state_history = new StateHistory();
+        await state_history.fromJsonObject(await this.toJsonObject());
+        return state_history;
     }
 
     /** Submits the user response
@@ -49,14 +72,14 @@ export default class SimulationInstance extends SimObj {
         * if (players array includes user) {set this.players = playerrs array containing user}
         *    else {throw error that this user is not a player}
         */
-       let simInst = new SimulationInstance();
-       simInst = await this.toJsonObject();
-       if (simInst.players.includes(user)) {
-           this.response = response;
-           await this.insert();
-       } else {
-           throw new console.error("This user is not a player for this sim instance");
-       }
+        let simInst = new SimulationInstance();
+        simInst = await this.toJsonObject();
+        if (simInst.players.includes(user)) {
+            this.response = response;
+            await this.insert();
+        } else {
+            throw new console.error("This user is not a player for this sim instance");
+        }
     }
 
     /** Gets the current turn ffor the selected user
