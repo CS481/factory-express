@@ -23,7 +23,8 @@ export default class IJSONable {
     async fromJsonObject(jsonObj) {
         Object.keys(jsonObj).map((key, _) => {
             this[key] = jsonObj[key];
-        }); 
+        });
+        return this
     }
 
     /**
