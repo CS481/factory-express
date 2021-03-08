@@ -13,14 +13,28 @@ router.post(async function(req) {
     //let simulation = new Simulation();
     //let State = await simulation.getState();
     let State ={
- user_waiting: this.user_responses,
-            turn_number: "1",
-            response_deadline: "3",
-            resources: "100",
-            resource_deltas: "1000",
-            history: "history",
-            prompt: "prompt",
-            responses: "responses"
+            "user_waiting": "true",
+            "turn_number": 1,
+            "response_deadline": 3,
+            "object":{
+                "resources":[
+                    {
+                    "name":"money",
+                    "value":10
+                    }
+                ],
+                "user_resouces":[
+                    {
+                    "name":"money",
+                    "value":10,
+                    "user":"austin"
+                    }
+                ]
+            },
+            "history": "history",
+            "prompt": "prompt",
+            "responses": "responses",
+            "user_id": 12
     }
     return {State}; 
 });

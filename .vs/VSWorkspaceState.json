@@ -1,13 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\.metadata",
-    "\\bin",
-    "\\scripts",
     "\\src",
-    "\\src\\database",
-    "\\src\\model",
     "\\src\\routes"
   ],
+  "SelectedNode": "\\src\\routes\\SubmitReponse.js",
   "PreviewInSolutionExplorer": false
 }
