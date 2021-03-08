@@ -19,6 +19,12 @@ export default class SimObj extends IJSONable {
         await this.fromJsonObject(result);
     }
 
+    async selectMany() {
+        let conn = DBConnFactory();
+        let results = await conn.select(await this.toJsonObject(), this.tablename);
+        return Promise.all(results.map(async result => new this.constructor().fromJsonObject(result)))
+    }
+
     /**
      * Inserts this SimObj as a new entry in the database
      * @returns {String} The id of the new entry
