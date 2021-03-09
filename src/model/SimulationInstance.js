@@ -1,7 +1,6 @@
 import SimObj from "./SimObj.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
-import UserHistory from "./UserHistory.js";
 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
@@ -10,7 +9,6 @@ export default class SimulationInstance extends SimObj {
         let obj = {
             simulation: this.simulation,
             players: this.players,
-            responses: this.responses,
             deadline: this.deadline,
             turn_number: this.turn_number,
             resources: this.resources,
@@ -30,8 +28,6 @@ export default class SimulationInstance extends SimObj {
      */ 
     async getState(user, simulation_id) {
         this.simulation = simulation_id;
-        this.player_responses = [new UserHistory()];
-        this.player_responses[0].user = user.id;
         let instances = await this.selectMany();
         // Sort the instances in reverse order of the turn numbers
         instances.sort((lhs, rhs) => rhs.turn_number - lhs.turn_number);

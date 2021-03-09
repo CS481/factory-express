@@ -27,19 +27,6 @@ export default class Simulation extends SimObj {
     async init_sim(user) {
         this.user = user.id;
         let sim_id = await this.insert();
-
-        let frame = new Frame();
-        let frame_id = await frame.init_frame(user, sim_id);
-        
-        let default_end_frame =  {
-            prompt: 'This simulation has ended. Thank you for your participation.', 
-            rounds: [-1], 
-            responses: [],
-            id: frame_id,
-            user: user.id,
-            simulation: sim_id
-        };
-        await frame.modify_frame(user, default_end_frame);
         return sim_id;
     };
 

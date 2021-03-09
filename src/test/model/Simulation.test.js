@@ -42,10 +42,9 @@ test("Simulation successfully initiates", done => {
         try {
             let sim = new Simulation();
             await sim.init_sim(user1);
-            expect(mockInsert).toHaveBeenCalledTimes(2);
+            expect(mockInsert).toHaveBeenCalledTimes(1);
             expect(mockInsert.mock.calls[0][0]).toEqual({user: user1.id});
             expect(mockInsert.mock.calls[0][1]).toEqual(new Simulation().tablename);
-            expect(mockInsert.mock.calls[1][1]).toEqual(new Frame().tablename);
         } catch (e) {
             console.log(e.stack);
             done.fail();
