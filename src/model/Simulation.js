@@ -6,10 +6,17 @@ export default class Simulation extends SimObj {
 
     async toJsonObject() {
         let obj = {
+            facilitator: this.facilitator,
             name: this.name,
             response_timeout: this.response_timeout,
+            resource: this.resource,
+            prompt: this.prompt,
+            responses: this.responses,
+            rounnd_count: this.round_count,
+            user_count: this.usercount,
             resources: this.resources,
-            user: this.user,
+            // user: this.user,
+            user_resources: this.user_resources,
             id: this.id
         };
         Object.keys(obj).map((key, _) => {
@@ -24,8 +31,8 @@ export default class Simulation extends SimObj {
     *   @param {model.User} user The user creating this simulation
     *   @returns {String} the id of the new simulaiton
     */
-    async init_sim(user) {
-        this.user = user.id;
+    async init_sim(facilitator) {
+        this.facilitator = facilitator.id;
         let sim_id = await this.insert();
 
         let frame = new Frame();

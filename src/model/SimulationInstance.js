@@ -1,7 +1,8 @@
 import SimObj from "./SimObj.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
-import UserHistory from "./UserHistory.js";
+// import User from "./User.js";
+// import UserHistory from "./UserHistory.js";
 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
@@ -9,18 +10,17 @@ export default class SimulationInstance extends SimObj {
     async toJsonObject() {
         let obj = {
             simulation: this.simulation,
-            players: this.players,
-            responses: this.responses,
+            player_responses: this.player_responses,
             deadline: this.deadline,
             turn_number: this.turn_number,
             resources: this.resources,
-            player_responses: this.player_responses
         };
         Object.keys(obj).map((key, _) => {
             if (obj[key] == undefined) {
                 delete obj[key];
             }
         });
+       
         return obj;
     }
 
@@ -30,8 +30,8 @@ export default class SimulationInstance extends SimObj {
      */ 
     async getState(user, simulation_id) {
         this.simulation = simulation_id;
-        this.player_responses = [new UserHistory()];
-        this.player_responses[0].user = user.id;
+        // this.player_responses = [new UserHistory()];
+        // this.player_responses[0].user = user.id;
         let instances = await this.selectMany();
         // Sort the instances in reverse order of the turn numbers
         instances.sort((lhs, rhs) => rhs.turn_number - lhs.turn_number);
@@ -64,22 +64,21 @@ export default class SimulationInstance extends SimObj {
      * @param  {String} string
      */
     async submit_response(user, response) {
-        /* since we have an array of users (players), 
-        *   we need to set the players to the array that contains the user 
-        * Array.includes()
-        *      Determines whether the array contains a value, returning true or false as appropriate.
-        * 
-        * if (players array includes user) {set this.players = playerrs array containing user}
-        *    else {throw error that this user is not a player}
-        */
+        
         let simInst = new SimulationInstance();
-        simInst = await this.toJsonObject();
-        if (simInst.players.includes(user)) {
-            this.response = response;
+        await simInst.fromJsonObject(await this.toJsonObject());
+        // Need to check the player_response[] to find the user param
+        // Problem:: Array not creatred yet. will creating the array here make a new one everytime?
+        // After this, how would i make sure it is being inserted under correct user?
+        //  Would need to find the index of the specified user (i think)
+        //      int user_index = this.player_responses.indexOf(user)???
+        // if (simInst.player_responses.includes(user)) {
+           simInst.player_responses = [{user: user, response: response}];
+            this.player_responses = simInst.player_responses
             await this.insert();
-        } else {
-            throw new console.error("This user is not a player for this sim instance");
-        }
+        // } else {
+        //     throw new console.error("This user is not a player for this sim instance");
+        // }
     }
 
     /** Gets the current turn ffor the selected user
@@ -91,14 +90,15 @@ export default class SimulationInstance extends SimObj {
         this.sim_id = simID;
         // make array containing the user. Mongo should search for it. 
         let simInst = new SimulationInstance();
-        simInst = await this.toJsonObject();
-        if (simInst.players.includes(user)) {
-            await this.select();
-            let curTurn = simInst.turn_number;
-            return curTurn;
-        } else {
-            throw new console.error("This user is not a player for this sim instance");
-        }
+        await simInst.fromJsonObject(await this.toJsonObject());
+        // if (simInst.player_responses.includes(user)) {
+        this.player_responses.user = user;
+        await this.select();
+        let curTurn = this.turn_number;
+        return curTurn;
+        // } else {
+        //     throw new console.error("This user is not a player for this sim instance");
+        // }
     }
 
     /** Sets the turn_number round to 0 to begin the existing simulation
@@ -108,14 +108,15 @@ export default class SimulationInstance extends SimObj {
         // make arrray containing the user. Mongo should search for it. 
 
         let simInst = new SimulationInstance();
-        simInst = await this.toJsonObject();
-        if (simInst.players.includes(user)) {
-            simInst.turn_number = 0;
-            this.turn_number = simInst.turn_number;
+        await simInst.fromJsonObject(await this.toJsonObject());
+        // if (simInst.player_responses.includes(user)) {
+            this.player_responses.user = user;
+            await this.select();
+            this.turn_number = 0;
             await this.update(user);
-        } else {
-            throw new console.error("This user is not a player for this sim instance");
-        }
+        // } else {
+        //     throw new console.error("This user is not a player for this sim instance");
+        // }
     }
 
     // A SimulationInstance can only be modified by it's owner
@@ -123,6 +124,6 @@ export default class SimulationInstance extends SimObj {
     async modifyableBy(user) { 
         let simInst = new SimulationInstance();
         simInst = await this.toJsonObject();
-        return simInst.players.includes(user);
+        return simInst.player_responses.includes(user);
     }
 }
