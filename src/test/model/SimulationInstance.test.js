@@ -1,5 +1,5 @@
 import * as MongoConn from "../../database/MongoConn.js";
-import Simulation from "../../model/Simulation.js";
+// import Simulation from "../../model/Simulation.js";
 import SimulationInstance from "../../model/SimulationInstance.js";
 import User from "../../model/User.js"
 
@@ -8,7 +8,7 @@ user1.id = "Can modify";
 const user2 = new User();
 user2.id = "Cannot modify";
 const mockId = "1234";
-const mockSim = new Simulation();
+// const mockSim = new Simulation();
 const mock_sim_data = {
     id: mockId,
     user: user1.id,
@@ -84,57 +84,57 @@ afterAll(() => {
     MongoConn.default = MongoConnImpl;
 });
 
-// test("SimulationInstance successfully submits user response", done => {
-//     async function test() {
-//         try {
-//             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
-//             await simInstanceTest.submit_response(user1, ["yes"]);
-//             expect(mockInsert).toHaveBeenCalledTimes(1);
-//         } catch (e) {
-//             console.log(e.stack);
-//             done.fail();
-//         } finally {
-//             done();
-//         }
-//     }
-//     test();
-// });
+test("SimulationInstance successfully submits user response", done => {
+    async function test() {
+        try {
+            let simInstanceTest = new SimulationInstance();
+            //await simInstanceTest.fromJsonObject(mock_instance);
+            await simInstanceTest.submit_response(user1, ["yes"]);
+            expect(mockInsert).toHaveBeenCalledTimes(1);
+        } catch (e) {
+            console.log(e.stack);
+            done.fail();
+        } finally {
+            done();
+        }
+    }
+    test();
+});
 
-// test("SimulationInstance successfully gets the current turn number for the user", done => {
-//     async function test() {
-//         try{
-//             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
-//             let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
-//             expect(curTurn).toEqual(5);
-//         } catch (e) {
-//             console.log(e.stack);
-//             done.fail();
-//         } finally {
-//             done();
-//         }
-//     }
-//     test();
-// });
+test("SimulationInstance successfully gets the current turn number for the user", done => {
+    async function test() {
+        try{
+            let simInstanceTest = new SimulationInstance();
+            // await simInstanceTest.fromJsonObject(mock_instance);
+            let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
+            expect(curTurn).toEqual(5);
+        } catch (e) {
+            console.log(e.stack);
+            done.fail();
+        } finally {
+            done();
+        }
+    }
+    test();
+});
 
-// test("Simulation successfully begins (sets turn_number to 0)", done => {
-//     async function test() {
-//         try {
-//             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
-//             await simInstanceTest.begin_sim(user1);
-//             let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
-//             expect(curTurn).toEqual(0);
-//         } catch (e) {
-//             console.log(e.stack);
-//             done.fail();
-//         } finally {
-//             done();
-//         }
-//     }
-//     test();
-// });
+test("Simulation successfully begins (sets turn_number to 0)", done => {
+    async function test() {
+        try {
+            let simInstanceTest = new SimulationInstance();
+            // await simInstanceTest.fromJsonObject(mock_instance);
+            await simInstanceTest.begin_sim(user1);
+            let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
+            expect(curTurn).toEqual(0);
+        } catch (e) {
+            console.log(e.stack);
+            done.fail();
+        } finally {
+            done();
+        }
+    }
+    test();
+});
 
 test("SimulationInstance successfully returns current state", done => {
     async function test() {
