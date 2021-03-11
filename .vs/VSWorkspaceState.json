@@ -10,6 +10,6 @@
     "\\src\\simulation-schema\\js",
     "\\src\\simulation-schema\\schema"
   ],
-  "SelectedNode": "\\src\\simulation-schema\\schema\\UserResponse.json",
+  "SelectedNode": "\\src\\model\\SimulationInstance.js",
   "PreviewInSolutionExplorer": false
 }
