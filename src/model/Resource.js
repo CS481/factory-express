@@ -21,7 +21,6 @@ export default class Resource extends IJSONable {
     }
 
     runUserEquation(history, current_user) {
-        console.log(this._formatEquation(history, current_user));
         return evaluate(this._formatEquation(history, current_user));
     }
 
@@ -155,7 +154,6 @@ export default class Resource extends IJSONable {
                 if (name == uh.name) {
                     result = uh.value;
                 } else if (name == "response") {
-                    console.log(`${current_user} : ${uh.user}`)
                     result = uh.response;
                 }
             }
