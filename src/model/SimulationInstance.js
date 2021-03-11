@@ -23,7 +23,6 @@ export default class SimulationInstance extends SimObj {
         return obj;
     }
 
-    // Need to import State once implemented
     /** Get the state of the Simulation
      * @returns {model.State} Returns the state of the simulaiton
      */ 

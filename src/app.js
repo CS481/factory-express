@@ -13,6 +13,7 @@ import VerifyCredentials from "./routes/VerifyCredentials.js";
 import SimulationInitialization from "./routes/SimulationInitialization.js";
 import SimulationModification from "./routes/SimulationModification.js";
 import BeginSim from "./routes/BeginSim.js";
+import GetState from "./routes/GetState.js";
 
 var app = express();
 app.use(cors()); // Enable all CORS requests
