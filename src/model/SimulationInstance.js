@@ -1,7 +1,6 @@
 import SimObj from "./SimObj.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
-import UserHistory from "./UserHistory.js";
 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
@@ -10,11 +9,11 @@ export default class SimulationInstance extends SimObj {
         let obj = {
             simulation: this.simulation,
             players: this.players,
-            responses: this.responses,
             deadline: this.deadline,
             turn_number: this.turn_number,
             resources: this.resources,
-            player_responses: this.player_responses
+            player_responses: this.player_responses,
+            user_count: this.user_count
         };
         Object.keys(obj).map((key, _) => {
             if (obj[key] == undefined) {
@@ -30,8 +29,6 @@ export default class SimulationInstance extends SimObj {
      */ 
     async getState(user, simulation_id) {
         this.simulation = simulation_id;
-        this.player_responses = [new UserHistory()];
-        this.player_responses[0].user = user.id;
         let instances = await this.selectMany();
         // Sort the instances in reverse order of the turn numbers
         instances.sort((lhs, rhs) => rhs.turn_number - lhs.turn_number);
@@ -102,27 +99,72 @@ export default class SimulationInstance extends SimObj {
     }
 
     /** Sets the turn_number round to 0 to begin the existing simulation
-    *   @param {model.User} user The user to begin the simulation
+    * @param {model.User} user The user to begin the simulation
+    * @param {model.Simulation} simulation The simulation to create this instance from
+    * @returns {string} The id of the sim instance
     */ 
-    async begin_sim(user) {
-        // make arrray containing the user. Mongo should search for it. 
-
-        let simInst = new SimulationInstance();
-        simInst = await this.toJsonObject();
-        if (simInst.players.includes(user)) {
-            simInst.turn_number = 0;
-            this.turn_number = simInst.turn_number;
-            await this.update(user);
+    async begin_sim(user, simulation) {
+        this.user_count = {"$lt": simulation.user_count};
+        let instances = await this.selectMany();
+        if (await instances.length == 0) {
+            return await this._new_sim_instance(user, simulation);
         } else {
-            throw new console.error("This user is not a player for this sim instance");
+            await instances[0]._add_to_sim_instance(user, simulation);
+            return this.id;
         }
     }
 
+
     // A SimulationInstance can only be modified by it's owner
     // this one still does not recognize the user no matter what i do. 
-    async modifyableBy(user) { 
-        let simInst = new SimulationInstance();
-        simInst = await this.toJsonObject();
-        return simInst.players.includes(user);
+    async modifyableBy(user) {
+        let modifyable = false;
+        this.player_responses.forEach(response => {
+            modifyable = modifyable || response.user == user.id;
+        });
+        return modifyable;
+    }
+
+    /**
+     * Add a new sim_instance to the database
+     * @param {model.User} user The user to add to the new sim_instance
+     * @param {model.Simulation} simulation The simulation the new entry is an instance of
+     * @returns {string} The id of the new sim_instance
+     */
+    async _new_sim_instance(user, simulation) {
+        this.resources = {};
+        simulation.resources.forEach(resource => {
+            this.resources[resource.name] = resource.starting_value;
+        });
+        this.turn_number = 0;
+        this.deadline = -1;
+        this.player_responses = [];
+        this.user_count = 0;
+        this._add_new_user(user, simulation);
+        return this.insert();
+    }
+
+    /**
+     * Add the current user to an exising sim_instance
+     * @param {model.User} user The user to add to the sim_instance
+     * @param {model.Simulation} simulation The simulation this object is an instance of
+     */
+    async _add_to_sim_instance(user, simulation) {
+        this._add_new_user(user, simulation);
+        return this.update(user);
+    }
+
+    /**
+     * Populate the user_resources of this simulation
+     * @param {model.User} user The new user to add to this simulation 
+     * @param {model.Simulation} simulation The simulation this object is an instance of
+     */
+    _add_new_user(user, simulation) {
+        let new_history = {user: user.id, resources: {}};
+        simulation.user_resources.forEach(resource => {
+            new_history.resources[resource.name] = resource.starting_value; 
+        });
+        this.user_count++;
+        this.player_responses.push(new_history);
     }
 }

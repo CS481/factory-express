@@ -1,5 +1,5 @@
 import SimObj from "./SimObj.js";
-import Frame from "./Frame.js";
+import SimulationInstance from "./SimulationInstance.js";
 
 export default class Simulation extends SimObj {
     tablename = "Simulation";
@@ -27,21 +27,18 @@ export default class Simulation extends SimObj {
     async init_sim(user) {
         this.user = user.id;
         let sim_id = await this.insert();
-
-        let frame = new Frame();
-        let frame_id = await frame.init_frame(user, sim_id);
-        
-        let default_end_frame =  {
-            prompt: 'This simulation has ended. Thank you for your participation.', 
-            rounds: [-1], 
-            responses: [],
-            id: frame_id,
-            user: user.id,
-            simulation: sim_id
-        };
-        await frame.modify_frame(user, default_end_frame);
         return sim_id;
     };
+
+    /** Sets the turn_number round to 0 to begin the existing simulation
+    * @param {model.User} user The user to begin the simulation
+    * @returns {string} The id of the simulation instance this user is a part of
+    */ 
+    async begin_sim(user) {
+        await this.select();
+        let select_obj = await new SimulationInstance().fromJsonObject({simulation: this.id});
+        return await select_obj.begin_sim(user, this);
+    }
 
     /** Modifies an existing simulation
     *   @param {model.User} The user to modify the frame

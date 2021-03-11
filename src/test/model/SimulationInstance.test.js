@@ -118,23 +118,6 @@ afterAll(() => {
 //     test();
 // });
 
-// test("Simulation successfully begins (sets turn_number to 0)", done => {
-//     async function test() {
-//         try {
-//             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
-//             await simInstanceTest.begin_sim(user1);
-//             let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
-//             expect(curTurn).toEqual(0);
-//         } catch (e) {
-//             console.log(e.stack);
-//             done.fail();
-//         } finally {
-//             done();
-//         }
-//     }
-//     test();
-// });
 
 test("SimulationInstance successfully returns current state", done => {
     async function test() {
