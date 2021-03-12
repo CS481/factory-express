@@ -23,7 +23,6 @@ export default class SimulationInstance extends SimObj {
         return obj;
     }
 
-    // Need to import State once implemented
     /** Get the state of the Simulation
      * @returns {model.State} Returns the state of the simulaiton
      */ 
@@ -34,6 +33,7 @@ export default class SimulationInstance extends SimObj {
         instances.sort((lhs, rhs) => rhs.turn_number - lhs.turn_number);
         let state =  new State();
         await state.fromJsonObject(instances[0]);
+        state.user_id = user.id;
         state.history = await Promise.all(instances.map(async instance => {
             let sim_instance = await new SimulationInstance().fromJsonObject(instance);
             return sim_instance.getStateHistory();
@@ -160,7 +160,7 @@ export default class SimulationInstance extends SimObj {
      * @param {model.Simulation} simulation The simulation this object is an instance of
      */
     _add_new_user(user, simulation) {
-        let new_history = {user: user.id, resources: {}};
+        let new_history = {user: user.id, resources: {}, response: ""};
         simulation.user_resources.forEach(resource => {
             new_history.resources[resource.name] = resource.starting_value; 
         });

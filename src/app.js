@@ -12,9 +12,9 @@ import CreateAccount from "./routes/CreateAccount.js";
 import VerifyCredentials from "./routes/VerifyCredentials.js";
 import SimulationInitialization from "./routes/SimulationInitialization.js";
 import SimulationModification from "./routes/SimulationModification.js";
-import FrameInitialization from "./routes/FrameInitialization.js";
-import FrameModification from "./routes/FrameModification.js";
-import DeleteFrame from "./routes/DeleteFrame.js";
+import BeginSim from "./routes/BeginSim.js";
+import GetState from "./routes/GetState.js";
+import SubmitResponse from "./routes/SubmitResponse.js";
 
 var app = express();
 app.use(cors()); // Enable all CORS requests
