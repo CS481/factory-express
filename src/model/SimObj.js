@@ -23,7 +23,7 @@ export default class SimObj extends IJSONable {
         let conn = DBConnFactory();
         let results = await conn.select(await this.toJsonObject(), this.tablename);
         let results_array = [];
-        results.forEach(result => {
+        await results.forEach(result => {
             results_array.push(new this.constructor().fromJsonObject(result));
         });
         return Promise.all(results_array);

@@ -1,3 +1,4 @@
+import { json } from "express";
 import IJSONable from "./IJSONable.js";
 import Simulation from "./Simulation.js";
 
@@ -8,7 +9,8 @@ export default class State extends IJSONable {
             turn_number: this.turn_number,
             response_deadline: this.response_deadline,
             prompt: this.prompt,
-            responses: this.responses
+            responses: this.responses,
+            user_id: this.user_id
         };
         obj.history = await Promise.all(this.history.map(async h => h.toJsonObject()));
         Object.keys(obj).map((key, _) => {
