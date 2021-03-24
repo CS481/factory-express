@@ -2,14 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\database",
-    "\\src\\exception",
-    "\\src\\model",
     "\\src\\routes",
     "\\src\\simulation-schema",
     "\\src\\simulation-schema\\js",
     "\\src\\simulation-schema\\schema"
   ],
-  "SelectedNode": "\\src\\model\\SimulationInstance.js",
+  "SelectedNode": "\\src\\simulation-schema\\schema\\SimulationModification.json",
   "PreviewInSolutionExplorer": false
 }
