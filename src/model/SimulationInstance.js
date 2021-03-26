@@ -1,3 +1,5 @@
+import { forEach, forEachTransformDependencies } from "mathjs";
+import Resource from "./Resource.js";
 import SimObj from "./SimObj.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
@@ -8,7 +10,6 @@ export default class SimulationInstance extends SimObj {
     async toJsonObject() {
         let obj = {
             simulation: this.simulation,
-            players: this.players,
             deadline: this.deadline,
             turn_number: this.turn_number,
             resources: this.resources,
@@ -61,19 +62,58 @@ export default class SimulationInstance extends SimObj {
      * @param  {String} string
      */
     async submit_response(user, response) {
-        /* since we have an array of users (players), 
-        *   we need to set the players to the array that contains the user 
-        * Array.includes()
-        *      Determines whether the array contains a value, returning true or false as appropriate.
+        /*  TODO: 
+        *   Verify both players have responded, 
+        *   submit the response, update the state. 
         * 
-        * if (players array includes user) {set this.players = playerrs array containing user}
-        *    else {throw error that this user is not a player}
+        *   If both players have not rresponded.....
         */
         let simInst = new SimulationInstance();
-        simInst = await this.toJsonObject();
-        if (simInst.players.includes(user)) {
-            this.response = response;
+        simInst = await this.fromJsonObject(await this.toJsonObject());
+        if (simInst.player_responses.includes(user)) {
+            await this.select();
+            // Find the index in the array of the user submitting the response. 
+            let user_index = await this.player_responses.indexOf(user);
+            this.player_responses[user_index].response = response;
             await this.insert();
+
+            //  Check that all players have responded, update state
+            //  for each user in the player_responses array,
+            //  check for a valid response
+            if (this.player_responses.length > 1) {
+                // Doing for Each was confusing me a bit on how to do a fxn inside of it 
+                // I will iterate over array for now. 
+                for (let x = 0; x < this.player_responses.length; x++) {
+
+                    // Check for null Users or null / empty reponses
+                    if (this.player_responses[x].user == null 
+                        || this.player_responses[x].response == null
+                        || this.player_responses[x].response == "") {
+                            // If there is a null value. 
+                            // need to exit out and deal with it. 
+                            break;
+                    };
+
+                    if (x == this.player_responses.length - 1) {
+                        // If get to the end of the array wiht no issues
+                        // incrementing the turn number
+                        this.turn_number++;
+
+                        // update resources
+                        let res = new Resource();
+                        res = await this.fromJsonObject(await this.toJsonObject());
+                        res.forEach(res.runEquation(simInst.getStateHistory()));
+                        res.insert();
+
+                        this.update(user);
+
+                        // resetting all of the responses
+                        this.player_responses = [];
+                        
+                    }
+                };
+            }
+
         } else {
             throw new console.error("This user is not a player for this sim instance");
         }
@@ -88,10 +128,10 @@ export default class SimulationInstance extends SimObj {
         this.sim_id = simID;
         // make array containing the user. Mongo should search for it. 
         let simInst = new SimulationInstance();
-        simInst = await this.toJsonObject();
-        if (simInst.players.includes(user)) {
+        simInst = await this.fromJsonObject(await this.toJsonObject());
+        if (simInst.player_responses.includes(user)) {
             await this.select();
-            let curTurn = simInst.turn_number;
+            let curTurn = this.turn_number;
             return curTurn;
         } else {
             throw new console.error("This user is not a player for this sim instance");
@@ -116,7 +156,6 @@ export default class SimulationInstance extends SimObj {
 
 
     // A SimulationInstance can only be modified by it's owner
-    // this one still does not recognize the user no matter what i do. 
     async modifyableBy(user) {
         let modifyable = false;
         this.player_responses.forEach(response => {
