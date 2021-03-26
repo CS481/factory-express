@@ -7,8 +7,8 @@ import Void from "../simulation-schema/js/Void.js";
 var router = new Router("SimulationModification", SimulationModification, Void);
 router.post(async function(req) {
     let user = await new User().fromJsonObject(req.user);
-   // delete req.user; // Remove user from the message so we don't override it in modify_sim
-   // await new Simulation().modify_sim(user, req);
+    delete req.user; // Remove user from the message so we don't override it in modify_sim
+    await new Simulation().modify_sim(user, req);
     return {};
 });
 

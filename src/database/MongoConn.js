@@ -14,6 +14,8 @@ export default class MongoConn extends IDBConn {
             DB_PWD = encodeURIComponent(DB_PWD);
 	    DB_USR = DB_USR.replaceAll("%0D", "");
 	    DB_PWD = DB_PWD.replaceAll("%0D", "");
+	    DB_HOST = DB_HOST.replaceAll("\n", "");
+	    MongoConn._db_name = MongoConn._db_name.trim();
             let uri = `mongodb+srv://${DB_USR}:${DB_PWD}@${DB_HOST}/${MongoConn._db_name}?retryWrites=true&poolSize=20`;
 	    console.log(`mongodb+srv://${DB_USR}:${DB_PWD}@${DB_HOST}/${MongoConn._db_name}?retryWrites=true&poolSize=20`)
 	    console.log(`${DB_USR}`)
