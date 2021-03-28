@@ -7,10 +7,16 @@ export default class Simulation extends SimObj {
     async toJsonObject() {
         let obj = {
             name: this.name,
+            id: this.id,
+            name: this.name,
             response_timeout: this.response_timeout,
+            prompt: this.prompt,
+            responses: this.responses,
+            round_count: this.round_count,
+            user_count: this.user_count,
             resources: this.resources,
-            user: this.user,
-            id: this.id
+            user_resources: this.user_resources
+
         };
         Object.keys(obj).map((key, _) => {
             if (obj[key] == undefined) {
