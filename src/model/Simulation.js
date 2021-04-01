@@ -58,7 +58,7 @@ export default class Simulation extends SimObj {
         delete sim_data.user;
         this.fromJsonObject(sim_data);
         await this.replace(user);
-    };
+    }
 
     // A Simulation can only be modified by it's owner
     async modifyableBy(user) {

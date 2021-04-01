@@ -2,6 +2,7 @@ import express from 'express';
 import ServerException from './exception/ServerException.js';
 import InternalError from './exception/InternalError.js';
 import UnprocessableError from "./exception/UnprocessableError.js";
+import VoidSchema from "./simulation-schema/js/Void.js";
 
 export default class Router {
     static routes = []; // List of all the registered routes
@@ -11,7 +12,7 @@ export default class Router {
      * @param {Schema} inputValidater The schema that the input JSON must validate against
      * @param {Schema} outputValidater The schema that the returned JSON must validate against
      */
-    constructor(route, inputValidater, outputValidater) {
+    constructor(route, inputValidater, outputValidater=VoidSchema) {
         this.router = express.Router();
         this.inputValidater = inputValidater;
         this.outputValidater = outputValidater;
@@ -29,6 +30,20 @@ export default class Router {
             this._exception_handler(func, req, res, next);
         };
         this.router.post('/', _post.bind(this)); // Use bind() to avoid losing this caller's context
+    }
+
+    /**
+     * Executes async function when this route recieves a POST request.
+     * The function is called with the request's JSON body.
+     * This function is used when we need to serve a file to the client 
+     * @param {function} func The asynchronous function to execute
+     * @param {function} after Optional asynchronous callback function that executes after the file is downloaded. This function will receive the file path as an argument
+     */
+    post_download(func, after=undefined) {
+        async function _post_download(req, res, next) {
+            this._exception_handler(func, req, res, next, download=true, callback=after);
+        };
+        this.router.post('/', _post_download.bind(this));
     }
 
     /**
@@ -54,15 +69,36 @@ export default class Router {
         });
     }
 
-    async _exception_handler(func, req, res, next) {
+    /**
+     * Safely executes func and handles all errors that occur
+     * @param {*} func The function to execute that handles the client's request
+     * @param {*} req The client's request
+     * @param {*} res The response to send the client 
+     * @param {*} next 
+     * @param {boolean} download Whether or not we're trying to serve a file to the client
+     * @param {func} callback Optional asynchronous callback executed after file download. Only used if download=true
+     */
+    async _exception_handler(func, req, res, next, download=false, callback=undefined) {
         try {
             try {
                 this.inputValidater.Validate(req.body);
             } catch (e) {
                 throw new UnprocessableError(e.message);
             }
-            res.setHeader("content-type", "text/json")
-            res.send(await func(req.body));
+
+            if (download) {
+                let path = await func(req.body);
+                res.download(path);
+                callback(path);
+            } else {
+                res.setHeader("content-type", "text/json");
+                let response_body = await func(req.body);
+                if (response_body == undefined) {
+                    response_body = {};
+                } 
+                res.send(response_body);
+            }
+
         } catch (e) {
             if (e instanceof ServerException) {
                 console.trace(e);
