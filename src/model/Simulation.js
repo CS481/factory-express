@@ -7,6 +7,7 @@ export default class Simulation extends SimObj {
     async toJsonObject() {
         let obj = {
             name: this.name,
+            facilitator: this.user,
             id: this.id,
             name: this.name,
             response_timeout: this.response_timeout,
