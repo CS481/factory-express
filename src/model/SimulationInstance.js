@@ -154,7 +154,6 @@ export default class SimulationInstance extends SimObj {
         }
     }
 
-
     // A SimulationInstance can only be modified by it's owner
     async modifyableBy(user) {
         let modifyable = false;

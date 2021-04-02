@@ -34,6 +34,7 @@ export default class State extends IJSONable {
         await simulation.select()
         this.prompt = simulation.prompt;
         this.player_responses = simulation.player_responses;
+        this.responses = simulation.responses.keys();
 
         return this;
     }
