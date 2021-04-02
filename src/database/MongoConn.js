@@ -10,17 +10,13 @@ export default class MongoConn extends IDBConn {
         super();
         if (MongoConn._client === null) {
             let {DB_USR, DB_PWD, DB_HOST} = process.env;
+            DB_USR = DB_USR.trim();
+            DB_PWD = DB_PWD.trim();
+            DB_HOST = DB_HOST.trim();
+            MongoConn._db_name = MongoConn._db_name.trim();
             DB_USR = encodeURIComponent(DB_USR);
             DB_PWD = encodeURIComponent(DB_PWD);
-	    DB_USR = DB_USR.replaceAll("%0D", "");
-	    DB_PWD = DB_PWD.replaceAll("%0D", "");
-	    DB_HOST = DB_HOST.replaceAll("\n", "");
-	    MongoConn._db_name = MongoConn._db_name.trim();
             let uri = `mongodb+srv://${DB_USR}:${DB_PWD}@${DB_HOST}/${MongoConn._db_name}?retryWrites=true&poolSize=20`;
-	    console.log(`mongodb+srv://${DB_USR}:${DB_PWD}@${DB_HOST}/${MongoConn._db_name}?retryWrites=true&poolSize=20`)
-	    console.log(`${DB_USR}`)
-	    console.log(`${DB_PWD}`)
-   	    console.log(`${DB_HOST}`)
             console.log("Creating a new mongodb connection...")
             MongoConn._client = new mongodb.MongoClient(uri);
             MongoConn._client.connect();
