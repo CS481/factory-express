@@ -37,12 +37,21 @@ export default class Router {
      * The function is called with the request's JSON body.
      * This function is used when we need to serve a file to the client 
      * @param {function} func The asynchronous function to execute
-     * @param {function} after Optional asynchronous callback function that executes after the file is downloaded. This function will receive the file path as an argument
+     * @param {function} after Optional asynchronous callback function that executes after the file is downloaded. This function will receive the file path and any errors that occured
      */
     post_download(func, after=undefined) {
-        async function _post_download(req, res, next) {
-            this._exception_handler(func, req, res, next, download=true, callback=after);
+        function _after(path) {
+            function _after_inner(err) {
+                if (after != undefined) {
+                    after(path, err)
+                }
+            };
+            return _after_inner.bind(this);
         };
+        async function _post_download(req, res, next) {
+            this._exception_handler(func, req, res, next, true, _after.bind(this));
+        };
+
         this.router.post('/', _post_download.bind(this));
     }
 
@@ -88,15 +97,13 @@ export default class Router {
 
             if (download) {
                 let path = await func(req.body);
-                res.download(path);
-                callback(path);
+                res.download(path, path, callback(path));
             } else {
                 res.setHeader("content-type", "text/json");
                 let response_body = await func(req.body);
                 if (response_body == undefined) {
                     response_body = {};
                 } 
-                res.send(response_body);
             }
 
         } catch (e) {
