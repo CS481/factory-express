@@ -1,3 +1,4 @@
+import { combinations } from "mathjs";
 import SimObj from "./SimObj.js";
 import SimulationInstance from "./SimulationInstance.js";
 
@@ -7,7 +8,7 @@ export default class Simulation extends SimObj {
     async toJsonObject() {
         let obj = {
             name: this.name,
-            facilitator: this.user,
+            facilitator: this.facilitator,
             id: this.id,
             name: this.name,
             response_timeout: this.response_timeout,
@@ -32,7 +33,7 @@ export default class Simulation extends SimObj {
     *   @returns {String} the id of the new simulaiton
     */
     async init_sim(user) {
-        this.user = user.id;
+        this.facilitator = user.id;
         let sim_id = await this.insert();
         return sim_id;
     };
@@ -63,6 +64,6 @@ export default class Simulation extends SimObj {
 
     // A Simulation can only be modified by it's owner
     async modifyableBy(user) {
-        return user.id == this.user;
+        return user.id == this.facilitator;
     }
 };
