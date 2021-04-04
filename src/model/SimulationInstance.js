@@ -69,9 +69,10 @@ export default class SimulationInstance extends SimObj {
         *   If both players have not rresponded.....
         */
         let simInst = new SimulationInstance();
-        simInst = await this.fromJsonObject(await this.toJsonObject());
-        if (simInst.player_responses.includes(user)) {
+        // simInst = await this.fromJsonObject(await this.toJsonObject());
+        if (this.player_responses.includes(user)) {
             await this.select();
+            simInst.simulation = this.simulation.id
             // Find the index in the array of the user submitting the response. 
             let user_index = await this.player_responses.indexOf(user);
             this.player_responses[user_index].response = response;

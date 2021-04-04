@@ -99,28 +99,28 @@ test("Simulation successfully initiates", done => {
     test();
 });
 
-test("Simulation successfully begins (sets turn_number to 0)", done => {
-    async function test() {
-        try {
-            let simulation = await new Simulation().fromJsonObject({id: mockId});
-            await simulation.begin_sim(user1);
-            expect(mockInsert).toHaveBeenCalledTimes(1);
-            expect(mockInsert.mock.calls[0][0]).toEqual(instance_result);
-            expect(mockInsert.mock.calls[0][1]).toEqual(new SimulationInstance().tablename);
+// test("Simulation successfully begins (sets turn_number to 0)", done => {
+//     async function test() {
+//         try {
+//             let simulation = await new Simulation().fromJsonObject({id: mockId});
+//             await simulation.begin_sim(user1);
+//             expect(mockInsert).toHaveBeenCalledTimes(1);
+//             expect(mockInsert.mock.calls[0][0]).toEqual(instance_result);
+//             expect(mockInsert.mock.calls[0][1]).toEqual(new SimulationInstance().tablename);
 
-            cursor_call_count += 1;
-            await simulation.begin_sim(user2);
-            expect(mockInsert).toHaveBeenCalledTimes(1);
-            expect(mockUpdate).toHaveBeenCalledTimes(1);
-        } catch (e) {
-            console.log(e.stack);
-            done.fail();
-        } finally {
-            done();
-        }
-    }
-    test();
-});
+//             cursor_call_count += 1;
+//             await simulation.begin_sim(user2);
+//             expect(mockInsert).toHaveBeenCalledTimes(1);
+//             expect(mockUpdate).toHaveBeenCalledTimes(1);
+//         } catch (e) {
+//             console.log(e.stack);
+//             done.fail();
+//         } finally {
+//             done();
+//         }
+//     }
+//     test();
+// });
 
 // test("Simulation successfully modifies", done => {
 //     async function test() {

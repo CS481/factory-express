@@ -88,9 +88,10 @@ afterAll(() => {
 //     async function test() {
 //         try {
 //             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
+//             await simInstanceTest.fromJsonObject(mock_instance1);
 //             await simInstanceTest.submit_response(user1, ["yes"]);
 //             expect(mockInsert).toHaveBeenCalledTimes(1);
+//             expect(simInstanceTest.player_responses).toEqual("");
 //         } catch (e) {
 //             console.log(e.stack);
 //             done.fail();
@@ -105,9 +106,9 @@ afterAll(() => {
 //     async function test() {
 //         try{
 //             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
+//             await simInstanceTest.fromJsonObject(mock_instance2);
 //             let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
-//             expect(curTurn).toEqual(5);
+//             expect(curTurn).toEqual(2);
 //         } catch (e) {
 //             console.log(e.stack);
 //             done.fail();
