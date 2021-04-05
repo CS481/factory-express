@@ -15,7 +15,7 @@ const mock_sim_data = {
     response_timeout: -1,
     resources: [{name: "stuff", starting_value: "111"}],
     name: "test sim",
-    responses: ["response1", "response2"],
+    responses: {"response1": "response1", "response2": "response2"},
     prompt: "This is a prompt!"
 };
 
@@ -47,7 +47,8 @@ const expected_state = {
     response_deadline: mock_instance2.deadline,
     prompt: mock_sim_data.prompt,
     user_waiting: false,
-    responses: mock_sim_data.responses,
+    user_id: user1.id,
+    responses: ["response1", "response2"],
     history: [
         {resources: mock_instance2.resources, user_history: mock_instance2.player_responses},
         {resources: mock_instance1.resources, user_history: mock_instance1.player_responses}
