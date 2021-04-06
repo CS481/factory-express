@@ -70,19 +70,41 @@ export default class SimulationInstance extends SimObj {
         *   If both players have not responded.....BREAK
         */
         this.simulation = simulation_id;
-        //need to find where one of the users is user param
-        this.player_responses = [{user: user.id}];
+
+        // console.log(JSON.parse(JSON.stringify(this.simulation)));
         
+        //need to find where one of the users is user param
+        this.player_responses = {"$elemMatch": {user: user.id}};
+        
+        // console.log(JSON.parse(JSON.stringify(this.player_responses)));
         // TODO: select the one with the highest turn number
         let instances = await this.selectMany();
+
+        //console.log(JSON.parse(JSON.stringify(instances)));
+
         // Sort the instances in reverse order of the turn numbers
         instances.sort((lhs, rhs) => rhs.turn_number - lhs.turn_number);
+
         // select the one with the highest turn number
         await this.fromJsonObject(instances[0]);
            
         // Find the index in the array of the user submitting the response. 
-        let user_index = await this.player_responses.indexOf({user: user.id});
+        let user_index = 0;
+
+        for (let F = 0; F < this.player_responses.length; F++) {
+            // Find the index wherre the player is in the response array.
+            // player_responses[F].user  = user
+            if (this.player_responses[F].user == user.id) {
+                user_index = F;
+                break;
+            }
+        }
+        console.log(this.player_responses[user_index]);
+
         this.player_responses[user_index].response = response;
+        console.log(JSON.parse(JSON.stringify(this.player_responses[user_index])));
+        
+        // does not actually Update
         await this.update(user);
     
         // Doing for Each was confusing me a bit on how to do a fxn inside of it 
@@ -91,15 +113,14 @@ export default class SimulationInstance extends SimObj {
 
             // Check for null Users or null / empty reponses
             if (this.player_responses[x].user == null 
-                || this.player_responses[x].response == null
-                || this.player_responses[x].response == "") {
+                || this.player_responses[x].response == null) {
                     // If there is a null value. 
                     // need to exit out and deal with it. 
                     break;
             };
 
             if (x == this.player_responses.length - 1) {
-
+                console.log("hi");
                 // update resources
                 let sim = new Simulation();
                 sim.id = simulation_id;

@@ -66,6 +66,7 @@ export default class MongoConn extends IDBConn {
         _mongoize(insertObj);
         let collection = this._get_collection(table);
         let result = await collection.insertOne(insertObj);
+        //console.log(insertObj);
         return String(result.insertedId);
     }
 
@@ -82,6 +83,7 @@ export default class MongoConn extends IDBConn {
         _mongoize(queryObj);
         _mongoize(updatesObj);
         let collection = this._get_collection(table);
+        // console.log(updatesObj);
         return collection.updateOne(queryObj, {$set: updatesObj});
     }
 
