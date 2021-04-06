@@ -1,5 +1,7 @@
 import SimObj from "./SimObj.js";
 import SimulationInstance from "./SimulationInstance.js";
+import StrictCsvWriter from "../util/StrictCsvWriter.js";
+import ForbiddenError from "../exception/ForbiddenError.js";
 
 export default class Simulation extends SimObj {
     tablename = "Simulation";
@@ -8,7 +10,7 @@ export default class Simulation extends SimObj {
         let obj = {
             name: this.name,
             id: this.id,
-            name: this.name,
+            facilitator: this.facilitator,
             response_timeout: this.response_timeout,
             prompt: this.prompt,
             responses: this.responses,
@@ -16,7 +18,6 @@ export default class Simulation extends SimObj {
             user_count: this.user_count,
             resources: this.resources,
             user_resources: this.user_resources
-
         };
         Object.keys(obj).map((key, _) => {
             if (obj[key] == undefined) {
@@ -60,8 +61,37 @@ export default class Simulation extends SimObj {
         await this.replace(user);
     }
 
+    /**
+     * Writes the data dump csv
+     * @param {model.User} user The user getting the data dump
+     * @param {String} sim_id The id of the simulation to dump
+     * @param {String} path The path of the written csv file
+     */
+    async data_dump(user, sim_id, path) {
+        this.id = sim_id;
+        await this.select();
+        if (!(await this.modifyableBy(user))) {
+            throw new ForbiddenError("This user does not have permissions to update this SimObj");
+        }
+
+        let columns = ["round_number"];
+        for(let resource of this.resources) {
+            columns.push(resource.name);
+        }
+        for (let i = 0; i < this.user_count; i++) {
+            columns.push(`player${i}-id`);
+            columns.push(`player${i}-name`);
+            columns.push(`player${i}-response`);
+            for(let user_resource of this.user_resources) {
+                columns.push(`player${i}-${user_resource.name}`);
+            }
+        }
+        let writer = new StrictCsvWriter(columns, path);
+        return new SimulationInstance()._data_dump(writer, sim_id);
+    }
+
     // A Simulation can only be modified by it's owner
     async modifyableBy(user) {
-        return user.id == this.user;
+        return user.id == this.facilitator;
     }
 };

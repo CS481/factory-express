@@ -3,6 +3,7 @@ import Resource from "./Resource.js";
 import SimObj from "./SimObj.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
+import User from "./User.js";
 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
@@ -205,5 +206,53 @@ export default class SimulationInstance extends SimObj {
         });
         this.user_count++;
         this.player_responses.push(new_history);
+    }
+
+    /**
+     * Dump the data of all simulationinstances with a specific simulationid
+     * @param {util.StrictCsvWriter} writer The csvWriter object
+     * @param {String} sim_id The id of the simulation to get data dumps for
+     */
+    async _data_dump(writer, sim_id) {
+        this.simulation = sim_id;
+        let instances = await this.selectMany();
+        await this.select();
+        let usernames = {undefined: "undefined"};
+        for await(let instance of instances) {
+            usernames = await instance._write_to_csv(writer, usernames);
+        }
+    }
+
+    /**
+     * Write this specific simulationinstance's data to the csv
+     * @param {util.StrictCsvWriter} writer The csvWriter object
+     * @param {Object} usernames Cache of dict that maps user ids to their usernames
+     */
+    async _write_to_csv(writer, usernames) {
+        let records = {round_number: this.round_number};
+        for(let resource of Object.keys(this.resources)) {
+            records[resource] = this.resources[resource];
+        }
+        for(let i = 0; i < this.user_count; i++) {
+            let player_response = this.player_responses[i];
+            let key = `player${i}`;
+            if(!(player_response.id in usernames)) {
+                let user = new User();
+                await user.get_by_id(player_response.id);
+                usernames[player_response.id] = user.username;
+            }
+            records[`${key}-id`] = player_response.id;
+            records[`${key}-name`] = usernames[player_response.id];
+            records[`${key}-response`] = player_response.response;
+            for(let user_resource of Object.keys(player_response.resources)) {
+                records[`${key}-${user_resource}`] = player_response.resources[user_resource];
+            }
+        }
+        try {
+            await writer.write(records);
+        } catch (e) {
+            console.log(`Error adding entry: ${e}`);
+        }
+        return usernames;
     }
 }

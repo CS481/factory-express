@@ -13,8 +13,10 @@ def main():
     args = parser.parse_args()
     csv_name = args.csv_name[0]
     output_name = args.output_name[0]
+    print(csv_name)
+    print(output_name)
 
-    records_df = pandas.read_csv(csv_name, sep='|', engine='c')
+    records_df = pandas.read_csv(csv_name, engine='c')
     pyreadstat.write_sav(records_df, output_name)
 
 if __name__ == "__main__":
