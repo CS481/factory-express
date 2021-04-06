@@ -17,6 +17,7 @@ def main():
     print(output_name)
 
     records_df = pandas.read_csv(csv_name, engine='c')
+    records_df.columns = df.columns.str.replace(' ', '-')
     pyreadstat.write_sav(records_df, output_name)
 
 if __name__ == "__main__":

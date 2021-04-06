@@ -8,9 +8,7 @@ export default class StrictCsvWriter {
      * @param {String} path The path to the file to write
      */
     constructor(fields, path) {
-        this.fields = fields.map(field => {
-            return field.replace(StrictCsvWriter._normalize_regex, "-");
-        });
+        this.fields = fields;
         let header = fields.map(field => {
             return {id: field, title: field};
         });
@@ -43,17 +41,5 @@ export default class StrictCsvWriter {
         if (keys_matched != this.fields.length) {
             throw new Error(`Error adding record to csv: incorrect number of fields. Expected ${this.fields.length}, instead got ${keys_matched}`);
         }
-    }
-
-    /**
-     * Remove spaces from keys in the record
-     * @param {Object} record The record to add to the csv
-     */
-    _normalize_keys(record) {
-        let new_record = {};
-        for (let key of Object.keys(record)) {
-            new_record[key.replace(StrictCsvWriter._normalize_regex, "-")] = record[key];
-        }
-        return new_record;
     }
 };
