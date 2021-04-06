@@ -85,23 +85,23 @@ afterAll(() => {
     MongoConn.default = MongoConnImpl;
 });
 
-// test("SimulationInstance successfully submits user response", done => {
-//     async function test() {
-//         try {
-//             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance1);
-//             await simInstanceTest.submit_response(user1, ["yes"]);
-//             expect(mockInsert).toHaveBeenCalledTimes(1);
-//             expect(simInstanceTest.player_responses).toEqual("");
-//         } catch (e) {
-//             console.log(e.stack);
-//             done.fail();
-//         } finally {
-//             done();
-//         }
-//     }
-//     test();
-// });
+test("SimulationInstance successfully submits user response", done => {
+    async function test() {
+        try {
+            let simInstanceTest = new SimulationInstance();
+            await simInstanceTest.fromJsonObject(mock_instance1);
+            await simInstanceTest.submit_response(user1, "yes", mock_instance1.id);
+            expect(mockInsert).toHaveBeenCalledTimes(1);
+            expect(simInstanceTest.player_response).toEqual;
+        } catch (e) {
+            console.log(e.stack);
+            done.fail();
+        } finally {
+            done();
+        }
+    }
+    test();
+});
 
 // test("SimulationInstance successfully gets the current turn number for the user", done => {
 //     async function test() {
