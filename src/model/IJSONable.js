@@ -1,3 +1,4 @@
+import { combinations } from "mathjs";
 import UnimplementedError from "../exception/UnimplementedError.js";
 
 // Interface for objects that can be serialized and deserialized to json strings
