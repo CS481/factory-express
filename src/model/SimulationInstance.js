@@ -195,7 +195,6 @@ export default class SimulationInstance extends SimObj {
         }
     }
 
-
     // A SimulationInstance can only be modified by it's owner
     async modifyableBy(user) {
         let modifyable = false;
@@ -217,7 +216,7 @@ export default class SimulationInstance extends SimObj {
             this.resources[resource.name] = resource.starting_value;
         });
         this.turn_number = 0;
-        this.deadline = -1;
+        this.deadline = "2018-11-13T20:20:39+00:00";
         this.player_responses = [];
         this.user_count = 0;
         this._add_new_user(user, simulation);
