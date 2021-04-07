@@ -29,7 +29,6 @@ export default class StrictCsvWriter {
      * @param {Object} record The record to add to the csv
      */
     _validate_record(record) {
-        record = this._normalize_keys(record);
         let keys_matched = 0;
         for(let key of Object.keys(record)) {
             if(this.fields.includes(key)) {
