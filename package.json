@@ -7,7 +7,9 @@
     "start": "./start.sh",
     "test": "./test.sh",
     "zip": "./aws_zip.sh",
-    "sav": "python ./bin/to_spss.py"
+    "sav": "run-script-os",
+    "sav:windows": "python ./bin/to_spss.py",
+    "sav:nix": "python3 ./bin/to_spss.py"
   },
   "dependencies": {
     "ajv": "^6.12.6",
@@ -21,7 +23,8 @@
     "jade": "^0.31.2",
     "mathjs": "^9.2.0",
     "mongodb": "^3.6.3",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "run-script-os": "^1.1.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
