@@ -1,3 +1,4 @@
+import { combinations } from "mathjs";
 import SimObj from "./SimObj.js";
 import SimulationInstance from "./SimulationInstance.js";
 import StrictCsvWriter from "../util/StrictCsvWriter.js";
@@ -9,6 +10,7 @@ export default class Simulation extends SimObj {
     async toJsonObject() {
         let obj = {
             name: this.name,
+            facilitator: this.facilitator,
             id: this.id,
             facilitator: this.facilitator,
             response_timeout: this.response_timeout,
@@ -32,7 +34,7 @@ export default class Simulation extends SimObj {
     *   @returns {String} the id of the new simulaiton
     */
     async init_sim(user) {
-        this.user = user.id;
+        this.facilitator = user.id;
         let sim_id = await this.insert();
         return sim_id;
     };
