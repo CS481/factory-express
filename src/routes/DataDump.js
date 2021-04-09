@@ -23,17 +23,17 @@ function after(path, err) {
     if (err != undefined) {
         console.log(`An error occurred downloading the file:\n${err}`);
     }
-    // unlink(path, err => {
-    //     if (err != undefined) {
-    //         console.log(`An error occurred removing the sav file:\n${err}`);
-    //     }
-    // });
-    // let csv_path = path.substring(0, path.length-4) + ".csv";
-    // unlink(csv_path, err => {
-    //     if (err != undefined) {
-    //         console.log(`An error occurred removing the csv file:\n${err}`);
-    //     }
-    // });
+    unlink(path, err => {
+        if (err != undefined) {
+            console.log(`An error occurred removing the sav file:\n${err}`);
+        }
+    });
+    let csv_path = path.substring(0, path.length-4) + ".csv";
+    unlink(csv_path, err => {
+        if (err != undefined) {
+            console.log(`An error occurred removing the csv file:\n${err}`);
+        }
+    });
 });
 
 export default router;

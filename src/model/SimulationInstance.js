@@ -229,23 +229,23 @@ export default class SimulationInstance extends SimObj {
      * @param {Object} usernames Cache of dict that maps user ids to their usernames
      */
     async _write_to_csv(writer, usernames) {
-        let records = {round_number: this.round_number};
+        let records = {turn_number: this.turn_number};
         for(let resource of Object.keys(this.resources)) {
             records[resource] = this.resources[resource];
         }
         for(let i = 0; i < this.user_count; i++) {
             let player_response = this.player_responses[i];
             let key = `player${i}`;
-            if(!(player_response.id in usernames)) {
+            if(!(player_response.user in usernames)) {
                 let user = new User();
-                await user.get_by_id(player_response.id);
-                usernames[player_response.id] = user.username;
+                await user.get_by_id(player_response.user);
+                usernames[player_response.user] = user.username;
             }
-            records[`${key}-id`] = player_response.id;
-            records[`${key}-name`] = usernames[player_response.id];
-            records[`${key}-response`] = player_response.response;
+            records[`${key}_id`] = player_response.user;
+            records[`${key}_name`] = usernames[player_response.user];
+            records[`${key}_response`] = player_response.response;
             for(let user_resource of Object.keys(player_response.resources)) {
-                records[`${key}-${user_resource}`] = player_response.resources[user_resource];
+                records[`${key}_${user_resource}`] = player_response.resources[user_resource];
             }
         }
         try {

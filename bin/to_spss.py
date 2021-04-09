@@ -17,7 +17,7 @@ def main():
     output_name = args.output_name[0]
 
     records_df = pandas.read_csv(csv_name, engine='c')
-    records_df.columns = records_df.columns.str.join(e for e in string if e.isalnum())
+    records_df.columns = [column.replace(' ', '_') for column in records_df.columns]
     pyreadstat.write_sav(records_df, output_name)
 
 if __name__ == "__main__":

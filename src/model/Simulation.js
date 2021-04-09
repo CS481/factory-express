@@ -74,16 +74,16 @@ export default class Simulation extends SimObj {
             throw new ForbiddenError("This user does not have permissions to update this SimObj");
         }
 
-        let columns = ["round_number"];
+        let columns = ["turn_number"];
         for(let resource of this.resources) {
             columns.push(resource.name);
         }
         for (let i = 0; i < this.user_count; i++) {
-            columns.push(`player${i}-id`);
-            columns.push(`player${i}-name`);
-            columns.push(`player${i}-response`);
+            columns.push(`player${i}_id`);
+            columns.push(`player${i}_name`);
+            columns.push(`player${i}_response`);
             for(let user_resource of this.user_resources) {
-                columns.push(`player${i}-${user_resource.name}`);
+                columns.push(`player${i}_${user_resource.name}`);
             }
         }
         let writer = new StrictCsvWriter(columns, path);
