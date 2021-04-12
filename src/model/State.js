@@ -30,7 +30,7 @@ export default class State extends IJSONable {
         this.response_deadline = jsonObj.deadline;
 
         // Set fields from the simulation
-        let simulation = await new Simulation().fromJsonObject({id: this.simulation})
+        let simulation = await new Simulation().fromJsonObject({id: jsonObj.simulation})
         await simulation.select()
         this.prompt = simulation.prompt;
         this.player_responses = simulation.player_responses;
