@@ -61,7 +61,7 @@ export default class Router {
             } catch (e) {
                 throw new UnprocessableError(e.message);
             }
-            let result = await this.outputValidater.Validate(await func(req.body));
+            let result = this.outputValidater.Validate(await func(req.body));
             res.setHeader("content-type", "text/json");
             res.send(result);
         } catch (e) {
