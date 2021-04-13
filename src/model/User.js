@@ -17,6 +17,7 @@ export default class User extends SimObj {
         let user = new User();
         user.username = userObj.username;
         user.password = userObj.password; // No need to enforce restrictions; we can use the schema for that
+        user.role = userObj.role;
         user.id = await user.insert(user);
         return user;
     }
@@ -30,6 +31,7 @@ export default class User extends SimObj {
     async fromJsonObject(jsonObj) {
         this.username = jsonObj.username;
         this.password = jsonObj.password;
+        this.role = jsonObj.role;
         await this.select();
         return this;
     }
