@@ -77,7 +77,7 @@ export default class SimulationInstance extends SimObj {
         this.player_responses = {"$elemMatch": {user: user.id}};
         
         // console.log(JSON.parse(JSON.stringify(this.player_responses)));
-        // TODO: select the one with the highest turn number
+        // Select the one with the highest turn number
         let instances = await this.selectMany();
 
         //console.log(JSON.parse(JSON.stringify(instances)));
@@ -92,7 +92,7 @@ export default class SimulationInstance extends SimObj {
         let user_index = 0;
 
         for (let F = 0; F < this.player_responses.length; F++) {
-            // Find the index wherre the player is in the response array.
+            // Find the index where the player is in the response array.
             // player_responses[F].user  = user
             if (this.player_responses[F].user == user.id) {
                 user_index = F;
