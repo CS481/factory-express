@@ -133,6 +133,7 @@ export default class SimulationInstance extends SimObj {
                 }            
                 
                 for (let z = 0; z < sim.user_resources.length; z++) {
+                    
                     let res = new Resource();
                     await res.fromJsonObject(sim.user_resources[z]);
 
