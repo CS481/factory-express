@@ -99,10 +99,10 @@ export default class SimulationInstance extends SimObj {
                 break;
             }
         }
-        console.log(this.player_responses[user_index]);
+        console.log(user_index);
 
         this.player_responses[user_index].response = response;
-        console.log(JSON.parse(JSON.stringify(this.player_responses[user_index])));
+        // console.log(JSON.parse(JSON.stringify(this.player_responses[user_index].response)));
         
         // does not actually Update
         await this.update(user);
@@ -113,14 +113,14 @@ export default class SimulationInstance extends SimObj {
 
             // Check for null Users or null / empty reponses
             if (this.player_responses[x].user == null 
-                || this.player_responses[x].response == null) {
+                || this.player_responses[x].response == null
+                || this.player_responses[x].response == "") {
                     // If there is a null value. 
                     // need to exit out and deal with it. 
                     break;
             };
 
             if (x == this.player_responses.length - 1) {
-                console.log("hi");
                 // update resources
                 let sim = new Simulation();
                 sim.id = simulation_id;
@@ -132,14 +132,18 @@ export default class SimulationInstance extends SimObj {
                     this.resources[y] = await res.runEquation(await this.getStateHistory());
                 }            
                 
-                for (let z = 0; z < sim.resources.length; z++) {
+                for (let z = 0; z < sim.user_resources.length; z++) {
                     let res = new Resource();
                     await res.fromJsonObject(sim.user_resources[z]);
+
                     for (let i = 0; i < sim.resources.length; i++){
                         this.player_responses[i].resources[res.name] = 
                             await res.runUserEquation(await this.getStateHistory(), this.player_responses[i].user);
                     }
                 }     
+
+                // need to update current instance before creating new one. 
+                await this.update(user);
 
                 // If get to the end of the array with no issues
                 // Create new sim instance and increment the turn counter
@@ -147,12 +151,11 @@ export default class SimulationInstance extends SimObj {
                 await new_Instance.fromJsonObject(await this.toJsonObject());
                 new_Instance.turn_number++;
 
+                
                 for (let j = 0; j < this.player_responses.length; j++) {
                     // resetting all of the responses
                     new_Instance.player_responses[j].response = "";
-                }
-
-                await this.update(user);
+                }                
                 
                 await new_Instance.insert();               
                 
