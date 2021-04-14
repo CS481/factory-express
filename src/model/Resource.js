@@ -38,6 +38,7 @@ export default class Resource extends IJSONable {
     _formatEquation(history, current_user=null) {
         // Sort the user_history to make the order deterministic. The actual order does not matter, as long as it is always consistent.
         let user_history = history.user_history;
+        // console.log(history);
         user_history.sort((lhs, rhs) => {
             if (lhs.user == rhs.user) {
                 return 0;
@@ -93,11 +94,11 @@ export default class Resource extends IJSONable {
    */
     _extractResourceValue(name, resources) {
         let result = null;
-        resources.forEach(resource => {
-            if (resource.name == name) {
-                result = resource.value;
+        for (let key in resources) {
+            if (key == name) {
+                result = resources[key];
             }
-        });
+        }
         if (result == null) {
             throw new _BadRequestError.default(`Failed to locate variable with name ${name}\nIn equation ${this.equation}`);
         }

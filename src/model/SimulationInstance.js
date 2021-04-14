@@ -99,7 +99,7 @@ export default class SimulationInstance extends SimObj {
                 break;
             }
         }
-        console.log(user_index);
+        // console.log(user_index);
 
         this.player_responses[user_index].response = response;
         // console.log(JSON.parse(JSON.stringify(this.player_responses[user_index].response)));
@@ -129,15 +129,15 @@ export default class SimulationInstance extends SimObj {
                 for (let y = 0; y < sim.resources.length; y++) {
                     let res = new Resource();
                     await res.fromJsonObject(sim.resources[y]);
-                    this.resources[y] = await res.runEquation(await this.getStateHistory());
+                    this.resources[sim.resources[y].name] = await res.runEquation(await this.getStateHistory());
                 }            
                 
                 for (let z = 0; z < sim.user_resources.length; z++) {
-                    
+
                     let res = new Resource();
                     await res.fromJsonObject(sim.user_resources[z]);
 
-                    for (let i = 0; i < sim.resources.length; i++){
+                    for (let i = 0; i < sim.user_count; i++){
                         this.player_responses[i].resources[res.name] = 
                             await res.runUserEquation(await this.getStateHistory(), this.player_responses[i].user);
                     }
