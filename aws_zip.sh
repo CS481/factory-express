@@ -20,7 +20,7 @@ done
 echo "Creating final zip file..."
 rm -v simulation-factory.zip
 cd zip
-zip -r ../simulation-factory.zip /
+zip -r ../simulation-factory.zip .
 cd ..
 
 echo "Removing temporary files..."
