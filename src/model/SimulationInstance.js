@@ -1,6 +1,6 @@
-import { forEach, forEachTransformDependencies } from "mathjs";
 import Resource from "./Resource.js";
 import SimObj from "./SimObj.js";
+import Simulation from "./Simulation.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
@@ -61,63 +61,108 @@ export default class SimulationInstance extends SimObj {
     /** Submits the user response
      * @param  {model.User} user
      * @param  {String} string
+     * @param  {simulation_id}
      */
-    async submit_response(user, response) {
+    async submit_response(user, response, simulation_id) {
         /*  TODO: 
         *   Verify both players have responded, 
         *   submit the response, update the state. 
         * 
-        *   If both players have not rresponded.....
+        *   If both players have not responded.....BREAK
         */
-        let simInst = new SimulationInstance();
-        simInst = await this.fromJsonObject(await this.toJsonObject());
-        if (simInst.player_responses.includes(user)) {
-            await this.select();
-            // Find the index in the array of the user submitting the response. 
-            let user_index = await this.player_responses.indexOf(user);
-            this.player_responses[user_index].response = response;
-            await this.insert();
+        this.simulation = simulation_id;
 
-            //  Check that all players have responded, update state
-            //  for each user in the player_responses array,
-            //  check for a valid response
-            if (this.player_responses.length > 1) {
-                // Doing for Each was confusing me a bit on how to do a fxn inside of it 
-                // I will iterate over array for now. 
-                for (let x = 0; x < this.player_responses.length; x++) {
+        // console.log(JSON.parse(JSON.stringify(this.simulation)));
+        
+        //need to find where one of the users is user param
+        this.player_responses = {"$elemMatch": {user: user.id}};
+        
+        // console.log(JSON.parse(JSON.stringify(this.player_responses)));
+        // Select the one with the highest turn number
+        let instances = await this.selectMany();
 
-                    // Check for null Users or null / empty reponses
-                    if (this.player_responses[x].user == null 
-                        || this.player_responses[x].response == null
-                        || this.player_responses[x].response == "") {
-                            // If there is a null value. 
-                            // need to exit out and deal with it. 
-                            break;
-                    };
+        //console.log(JSON.parse(JSON.stringify(instances)));
 
-                    if (x == this.player_responses.length - 1) {
-                        // If get to the end of the array wiht no issues
-                        // incrementing the turn number
-                        this.turn_number++;
+        // Sort the instances in reverse order of the turn numbers
+        instances.sort((lhs, rhs) => rhs.turn_number - lhs.turn_number);
 
-                        // update resources
-                        let res = new Resource();
-                        res = await this.fromJsonObject(await this.toJsonObject());
-                        res.forEach(res.runEquation(simInst.getStateHistory()));
-                        res.insert();
+        // select the one with the highest turn number
+        await this.fromJsonObject(instances[0]);
+           
+        // Find the index in the array of the user submitting the response. 
+        let user_index = 0;
 
-                        this.update(user);
-
-                        // resetting all of the responses
-                        this.player_responses = [];
-                        
-                    }
-                };
+        for (let F = 0; F < this.player_responses.length; F++) {
+            // Find the index where the player is in the response array.
+            // player_responses[F].user  = user
+            if (this.player_responses[F].user == user.id) {
+                user_index = F;
+                break;
             }
-
-        } else {
-            throw new console.error("This user is not a player for this sim instance");
         }
+        // console.log(user_index);
+
+        this.player_responses[user_index].response = response;
+        // console.log(JSON.parse(JSON.stringify(this.player_responses[user_index].response)));
+        
+        // does not actually Update
+        await this.update(user);
+    
+        // Doing for Each was confusing me a bit on how to do a fxn inside of it 
+        // I will iterate over array for now. 
+        for (let x = 0; x < this.player_responses.length; x++) {
+
+            // Check for null Users or null / empty reponses
+            if (this.player_responses[x].user == null 
+                || this.player_responses[x].response == null
+                || this.player_responses[x].response == "") {
+                    // If there is a null value. 
+                    // need to exit out and deal with it. 
+                    break;
+            };
+
+            if (x == this.player_responses.length - 1) {
+                // update resources
+                let sim = new Simulation();
+                sim.id = simulation_id;
+                await sim.select();
+
+                for (let y = 0; y < sim.resources.length; y++) {
+                    let res = new Resource();
+                    await res.fromJsonObject(sim.resources[y]);
+                    this.resources[sim.resources[y].name] = await res.runEquation(await this.getStateHistory());
+                }            
+                
+                for (let z = 0; z < sim.user_resources.length; z++) {
+
+                    let res = new Resource();
+                    await res.fromJsonObject(sim.user_resources[z]);
+
+                    for (let i = 0; i < sim.user_count; i++){
+                        this.player_responses[i].resources[res.name] = 
+                            await res.runUserEquation(await this.getStateHistory(), this.player_responses[i].user);
+                    }
+                }     
+
+                // need to update current instance before creating new one. 
+                await this.update(user);
+
+                // If get to the end of the array with no issues
+                // Create new sim instance and increment the turn counter
+                let new_Instance = new SimulationInstance();
+                await new_Instance.fromJsonObject(await this.toJsonObject());
+                new_Instance.turn_number++;
+
+                
+                for (let j = 0; j < this.player_responses.length; j++) {
+                    // resetting all of the responses
+                    new_Instance.player_responses[j].response = "";
+                }                
+                
+                await new_Instance.insert();               
+                
+            }
+        };
     }
 
     /** Gets the current turn ffor the selected user

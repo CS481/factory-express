@@ -15,7 +15,7 @@ const mock_sim_data = {
     response_timeout: -1,
     resources: [{name: "stuff", starting_value: "111"}],
     name: "test sim",
-    responses: ["response1", "response2"],
+    responses: {"response1": "response1", "response2": "response2"},
     prompt: "This is a prompt!"
 };
 
@@ -47,7 +47,8 @@ const expected_state = {
     response_deadline: mock_instance2.deadline,
     prompt: mock_sim_data.prompt,
     user_waiting: false,
-    responses: mock_sim_data.responses,
+    user_id: user1.id,
+    responses: ["response1", "response2"],
     history: [
         {resources: mock_instance2.resources, user_history: mock_instance2.player_responses},
         {resources: mock_instance1.resources, user_history: mock_instance1.player_responses}
@@ -84,30 +85,31 @@ afterAll(() => {
     MongoConn.default = MongoConnImpl;
 });
 
-// test("SimulationInstance successfully submits user response", done => {
-//     async function test() {
-//         try {
-//             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
-//             await simInstanceTest.submit_response(user1, ["yes"]);
-//             expect(mockInsert).toHaveBeenCalledTimes(1);
-//         } catch (e) {
-//             console.log(e.stack);
-//             done.fail();
-//         } finally {
-//             done();
-//         }
-//     }
-//     test();
-// });
+test("SimulationInstance successfully submits user response", done => {
+    async function test() {
+        try {
+            let simInstanceTest = new SimulationInstance();
+            await simInstanceTest.fromJsonObject(mock_instance1);
+            await simInstanceTest.submit_response(user1, "yes", mock_instance1.id);
+            expect(mockInsert).toHaveBeenCalledTimes(1);
+            expect(simInstanceTest.player_response).toEqual;
+        } catch (e) {
+            console.log(e.stack);
+            done.fail();
+        } finally {
+            done();
+        }
+    }
+    test();
+});
 
 // test("SimulationInstance successfully gets the current turn number for the user", done => {
 //     async function test() {
 //         try{
 //             let simInstanceTest = new SimulationInstance();
-//             await simInstanceTest.fromJsonObject(mock_instance);
+//             await simInstanceTest.fromJsonObject(mock_instance2);
 //             let curTurn = await simInstanceTest.getCurrentTurn(user1, mockId);
-//             expect(curTurn).toEqual(5);
+//             expect(curTurn).toEqual(2);
 //         } catch (e) {
 //             console.log(e.stack);
 //             done.fail();
