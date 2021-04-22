@@ -19,7 +19,11 @@ export default class Simulation extends SimObj {
             round_count: this.round_count,
             user_count: this.user_count,
             resources: this.resources,
-            user_resources: this.user_resources
+
+            user_resources: this.user_resources,
+            start_text: this.start_text,
+            end_text: this.end_text
+
         };
         Object.keys(obj).map((key, _) => {
             if (obj[key] == undefined) {
@@ -35,6 +39,8 @@ export default class Simulation extends SimObj {
     */
     async init_sim(user) {
         this.facilitator = user.id;
+        this.start_text = "";
+        this.end_text = "";
         let sim_id = await this.insert();
         return sim_id;
     };

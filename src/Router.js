@@ -95,16 +95,9 @@ export default class Router {
                 throw new UnprocessableError(e.message);
             }
 
-            if (download) {
-                let path = await func(req.body);
-                res.download(path, path, callback(path));
-            } else {
-                res.setHeader("content-type", "text/json");
-                let response_body = await func(req.body);
-                if (response_body == undefined) {
-                    response_body = {};
-                } 
-            }
+            let result = this.outputValidater.Validate(await func(req.body));
+            res.setHeader("content-type", "text/json");
+            res.send(result);
 
         } catch (e) {
             if (e instanceof ServerException) {

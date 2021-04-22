@@ -8,9 +8,10 @@ export default class State extends IJSONable {
             turn_number: this.turn_number,
             response_deadline: this.response_deadline,
             prompt: this.prompt,
-            player_responses: this.player_responses,
             user_id: this.user_id,
-            responses: this.responses
+            responses: this.responses,
+            start_text: this.start_text,
+            end_text: this.end_text
         };
         obj.history = await Promise.all(this.history.map(async h => h.toJsonObject()));
         Object.keys(obj).map((key, _) => {
@@ -33,8 +34,9 @@ export default class State extends IJSONable {
         let simulation = await new Simulation().fromJsonObject({id: jsonObj.simulation})
         await simulation.select()
         this.prompt = simulation.prompt;
-        this.player_responses = simulation.player_responses;
-        this.responses = Object.keys(simulation.responses);
+        this.responses = simulation.responses;
+        this.start_text = simulation.start_text;
+        this.end_text = simulation.end_text;
 
         return this;
     }

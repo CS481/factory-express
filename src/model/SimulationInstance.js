@@ -88,7 +88,7 @@ export default class SimulationInstance extends SimObj {
 
         // select the one with the highest turn number
         await this.fromJsonObject(instances[0]);
-           
+
         // Find the index in the array of the user submitting the response. 
         let user_index = 0;
 
