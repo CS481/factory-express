@@ -6,20 +6,25 @@
   "scripts": {
     "start": "./start.sh",
     "test": "./test.sh",
-    "zip": "./aws_zip.sh"
+    "zip": "./aws_zip.sh",
+    "sav": "run-script-os",
+    "sav:windows": "python ./bin/to_spss.py",
+    "sav:nix": "python3 ./bin/to_spss.py"
   },
   "dependencies": {
     "ajv": "^6.12.6",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
+    "csv-writer": "^1.6.0",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "^0.31.2",
     "mathjs": "^9.2.0",
     "mongodb": "^3.6.3",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "run-script-os": "^1.1.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",

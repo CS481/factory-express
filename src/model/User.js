@@ -71,6 +71,19 @@ export default class User extends SimObj {
     }
 
     /**
+     * Fetches a user by id, useful for getting the username of an arbitrary user
+     * @param {String} id The id of the user to fetch
+     */
+    async get_by_id(id) {
+        let conn = DBConnFactory();
+        let result = await conn.selectOne({id: id}, this.tablename);
+        if (result == null) {
+            throw new Error(`The requested SimObj with id ${id} cannot be found in the database`);
+        }
+        await super.fromJsonObject(result);
+    }
+
+    /**
      * Override the insert() function of SimObj
      */
     async insert() {
