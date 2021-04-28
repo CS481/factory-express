@@ -4,6 +4,8 @@ import Simulation from "./Simulation.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
+import BadRequestError from "../Exception/BadRequestError.js";
+
 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
@@ -91,9 +93,11 @@ export default class SimulationInstance extends SimObj {
 
         let sim = new Simulation();
         sim.id = simulation_id;
-        sim.select();
+        await sim.select();
+        await sim.fromJsonObject(sim);
+        // console.log(sim);
         // DO not Submit if less than expected # of users in Sim. 
-        if (user_count < sim.user_count) {
+        if (this.user_count != sim.user_count) {
             throw new BadRequestError("Not enough Users");
         };
 
