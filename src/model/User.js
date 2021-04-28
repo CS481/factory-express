@@ -116,6 +116,15 @@ export default class User extends SimObj {
         let conn = DBConnFactory();
         conn.replace({id: this.id}, await this.toDatabaseRecord(), this.tablename);
     }
+     /**
+     *  Allows for Role changes
+     */
+    async RollUpdate(user, roledata) {
+        this.user = roledata.id;
+        await this.select(); 
+        this.fromJsonObject(roledata);
+        await this.replace(user);
+    }
 
     /**
      * Override the modifyableBy() function of SimObj

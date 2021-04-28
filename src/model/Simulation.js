@@ -68,6 +68,12 @@ export default class Simulation extends SimObj {
         this.fromJsonObject(sim_data);
         await this.replace(user);
     }
+    /** Gets all the Simulations 
+    * @param {model.User} The user to get the Simulations
+    **/
+    async GetAllSims(user){
+
+    }
 
     /**
      * Writes the data dump csv
