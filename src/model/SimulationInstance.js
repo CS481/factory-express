@@ -90,7 +90,7 @@ export default class SimulationInstance extends SimObj {
         await this.fromJsonObject(instances[0]);
 
         let sim = new Simulation();
-        sim = simulation_id;
+        sim.id = simulation_id;
         sim.select();
         // DO not Submit if less than expected # of users in Sim. 
         if (user_count < sim.user_count) {
