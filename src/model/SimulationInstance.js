@@ -89,12 +89,14 @@ export default class SimulationInstance extends SimObj {
         // select the one with the highest turn number
         await this.fromJsonObject(instances[0]);
 
-        // DO not Submit if less than 2 users in Sim. 
-        if (user_count < 2) {
-            console.error("Not enough Users");
-            exit;
+        let sim = new Simulation();
+        sim = simulation_id;
+        sim.select();
+        // DO not Submit if less than expected # of users in Sim. 
+        if (user_count < sim.user_count) {
+            throw new BadRequestError("Not enough Users");
         };
-        
+
         // Find the index in the array of the user submitting the response. 
         let user_index = 0;
 
