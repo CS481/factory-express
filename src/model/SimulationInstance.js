@@ -4,7 +4,7 @@ import Simulation from "./Simulation.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
-import BadRequestError from "../Exception/BadRequestError.js";
+import BadRequestError from "../exception/BadRequestError.js";
  
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
