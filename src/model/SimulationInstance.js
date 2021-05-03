@@ -5,8 +5,7 @@ import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
 import BadRequestError from "../Exception/BadRequestError.js";
-
-
+ 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
 
@@ -192,7 +191,7 @@ export default class SimulationInstance extends SimObj {
             let curTurn = this.turn_number;
             return curTurn;
         } else {
-            throw new console.error("This user is not a player for this sim instance");
+            throw new BadRequestError("This user is not a player for this sim instance");
         }
     }
 
