@@ -4,7 +4,8 @@ import Simulation from "./Simulation.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
-
+import BadRequestError from "../exception/BadRequestError.js";
+ 
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
 
@@ -40,11 +41,20 @@ export default class SimulationInstance extends SimObj {
             let sim_instance = await new SimulationInstance().fromJsonObject(instance);
             return sim_instance.getStateHistory();
         }));
-        state.user_waiting = true;
-        state.history[0].user_history.forEach(u_his => {
-            // Set user_waiting to false if user_waiting is already false, or if this user has not submitted a response yet
-            state.user_waiting = !(!state.user_waiting || (u_his.user == user.id && u_his.response == ""));
-        });
+
+        // Set state.user_waiting
+        let simulation = await new Simulation().fromJsonObject({id: this.simulation});
+        await simulation.select();
+        if (instances[0].user_count < simulation.user_count) {
+            state.user_waiting = true;
+        } else {
+            state.history[0].user_history.forEach(u_his => {
+                if (u_his.user == user.id) {
+                    state.user_waiting = u_his.response != "";
+                }
+            });
+        }
+        console.log(state.user_waiting);
         return state;
     }
 
@@ -88,6 +98,16 @@ export default class SimulationInstance extends SimObj {
 
         // select the one with the highest turn number
         await this.fromJsonObject(instances[0]);
+
+        let sim = new Simulation();
+        sim.id = simulation_id;
+        await sim.select();
+        await sim.fromJsonObject(sim);
+        // console.log(sim);
+        // DO not Submit if less than expected # of users in Sim. 
+        if (this.user_count != sim.user_count) {
+            throw new BadRequestError("Not enough Users");
+        };
 
         // Find the index in the array of the user submitting the response. 
         let user_index = 0;
@@ -180,7 +200,7 @@ export default class SimulationInstance extends SimObj {
             let curTurn = this.turn_number;
             return curTurn;
         } else {
-            throw new console.error("This user is not a player for this sim instance");
+            throw new BadRequestError("This user is not a player for this sim instance");
         }
     }
 
