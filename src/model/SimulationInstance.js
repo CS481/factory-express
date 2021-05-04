@@ -200,7 +200,20 @@ export default class SimulationInstance extends SimObj {
     * @param {model.Simulation} simulation The simulation to create this instance from
     * @returns {string} The id of the sim instance
     */ 
-    async begin_sim(user, simulation) {
+    async begin_sim(user, simulation) { 
+        
+        /*  TODO:
+        *   User being both players in same sim. 
+        *   Needs to be stopped. 
+        *   Plan: Check the Simulation in BeginSim for the existing user. If user exists, throw error. 
+        */
+        this.user_count = {"$lt": simulation.user_count};
+        let instances = await this.selectMany();
+        for (let x = 0; x < this.player_responses.length(); x++) {
+            if (this.player_responses[x].user_id == user) {
+            throw new UnauthorizedError("User aready joined this instance");
+            }
+        }
         this.user_count = {"$lt": simulation.user_count};
         let instances = await this.selectMany();
         if (await instances.length == 0) {
