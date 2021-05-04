@@ -42,7 +42,7 @@ export default class SimulationInstance extends SimObj {
             return sim_instance.getStateHistory();
         }));
 
-        user_waiting_found = false;
+        let user_waiting_found = false;
         state.history[0].user_history.forEach(u_his => {
             if (!user_waiting_found && u_his.user == user.id) {
                 state.user_waiting = u_his.response != "";
