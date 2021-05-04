@@ -209,15 +209,13 @@ export default class SimulationInstance extends SimObj {
         */
         this.user_count = {"$lt": simulation.user_count};
         let instances = await this.selectMany();
-        for (let x = 0; x < this.player_responses.length(); x++) {
-            if (this.player_responses[x].user_id == user) {
-            throw new UnauthorizedError("User aready joined this instance");
-            }
-        }
-
+       
         if (await instances.length == 0) {
             return await this._new_sim_instance(user, simulation);
         } else {
+            if (instances[0].player_responses.includes(user)) {
+                throw new UnauthorizedError("User aready joined this instance");
+                }
             await instances[0]._add_to_sim_instance(user, simulation);
             return this.id;
         }
