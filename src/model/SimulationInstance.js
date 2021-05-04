@@ -214,8 +214,7 @@ export default class SimulationInstance extends SimObj {
             throw new UnauthorizedError("User aready joined this instance");
             }
         }
-        this.user_count = {"$lt": simulation.user_count};
-        let instances = await this.selectMany();
+
         if (await instances.length == 0) {
             return await this._new_sim_instance(user, simulation);
         } else {
