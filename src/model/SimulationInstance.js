@@ -41,11 +41,20 @@ export default class SimulationInstance extends SimObj {
             let sim_instance = await new SimulationInstance().fromJsonObject(instance);
             return sim_instance.getStateHistory();
         }));
-        state.user_waiting = true;
-        state.history[0].user_history.forEach(u_his => {
-            // Set user_waiting to false if user_waiting is already false, or if this user has not submitted a response yet
-            state.user_waiting = !(!state.user_waiting || (u_his.user == user.id && u_his.response == ""));
-        });
+
+        // Set state.user_waiting
+        let simulation = await new Simulation().fromJsonObject({id: this.simulation});
+        await simulation.select();
+        if (instances[0].user_count < simulation.user_count) {
+            state.user_waiting = true;
+        } else {
+            state.history[0].user_history.forEach(u_his => {
+                if (u_his.user == user.id) {
+                    state.user_waiting = u_his.response != "";
+                }
+            });
+        }
+        console.log(state.user_waiting);
         return state;
     }
 
