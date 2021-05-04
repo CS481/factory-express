@@ -41,10 +41,13 @@ export default class SimulationInstance extends SimObj {
             let sim_instance = await new SimulationInstance().fromJsonObject(instance);
             return sim_instance.getStateHistory();
         }));
-        state.user_waiting = true;
+
+        user_waiting_found = false;
         state.history[0].user_history.forEach(u_his => {
-            // Set user_waiting to false if user_waiting is already false, or if this user has not submitted a response yet
-            state.user_waiting = !(!state.user_waiting || (u_his.user == user.id && u_his.response == ""));
+            if (!user_waiting_found && u_his.user == user.id) {
+                state.user_waiting = u_his.response != "";
+                user_waiting_found = true;
+            }
         });
         return state;
     }
