@@ -48,9 +48,7 @@ export default class SimulationInstance extends SimObj {
         if (instances[0].user_count < simulation.user_count) {
             state.user_waiting = true;
         } else {
-            console.log(state.history[0]);
             state.history[0].user_history.forEach(u_his => {
-                console.log(u_his.user + ", " + user.id + ", " + (u_his.user == user.id));
                 if (u_his.user == user.id) {
                     state.user_waiting = u_his.response != "";
                 }
