@@ -42,13 +42,22 @@ export default class SimulationInstance extends SimObj {
             return sim_instance.getStateHistory();
         }));
 
-        let user_waiting_found = false;
-        state.history[0].user_history.forEach(u_his => {
-            if (!user_waiting_found && u_his.user == user.id) {
-                state.user_waiting = u_his.response != "";
-                user_waiting_found = true;
-            }
-        });
+        // Set state.user_waiting
+        let simulation = await new Simulation().fromJsonObject({id: this.simulation});
+        await simulation.select();
+        if (instances[0].user_count < simulation.user_count) {
+            state.user_waiting = false;
+        } else {
+            let user_waiting_found = false;
+            state.history[0].user_history.forEach(u_his => {
+                console.log(u_his.user + ", " + user.id);
+                if (!user_waiting_found && u_his.user == user.id) {
+                    state.user_waiting = u_his.response != "";
+                    user_waiting_found = true;
+                }
+            });
+        }
+
         return state;
     }
 
