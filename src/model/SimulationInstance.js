@@ -56,6 +56,12 @@ export default class SimulationInstance extends SimObj {
                 }
             });
         }
+
+        
+        if (instances[0].turn_number >= simulation.round_count) {
+            throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
+        }
+
         console.log(state.user_waiting);
         return state;
     }
@@ -169,14 +175,6 @@ export default class SimulationInstance extends SimObj {
                 // need to update current instance before creating new one. 
                 await this.update(user);
 
-                let simulation = new Simulation();
-                simulation.id = this.sim_id;
-                simulation.select();
-                let sim_end = simulation.round_count;
-
-                if (this.turn_number == sim_end) {
-                    throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
-                }
                 // If get to the end of the array with no issues
                 // Create new sim instance and increment the turn counter
                 let new_Instance = new SimulationInstance();
