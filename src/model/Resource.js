@@ -38,7 +38,7 @@ export default class Resource extends IJSONable {
     _formatEquation(history, current_user=null) {
         // Sort the user_history to make the order deterministic. The actual order does not matter, as long as it is always consistent.
         let user_history = history.user_history;
-        // console.log(history);
+
         user_history.sort((lhs, rhs) => {
             if (lhs.user == rhs.user) {
                 return 0;
@@ -119,10 +119,14 @@ export default class Resource extends IJSONable {
         let result = null;
         user_history.forEach(uh => {
             if (uh.user == current_user) {
-                if(name == uh.name) {
-                    result = uh.value;
-                } else if(name == "response") {
+                if(name == "response") {
                     result = uh.response;
+                } else {
+                    for (let resource in uh.resources) {
+                        if (name == resource) {
+                            result = uh.resources[resource];
+                        }
+                    }
                 }
             }
         });
@@ -147,20 +151,26 @@ export default class Resource extends IJSONable {
         let curr_user = '';
         let result = null;
         user_history.forEach(uh => {
-            if (curr_user != uh.user && uh.user != current_user) {
+            if (current_user == null) {
+                curr_user_index++;
+            } else if (curr_user != uh.user && uh.user != current_user) {
                 curr_user_index++;
                 curr_user = uh.user;
             }
             if (index == curr_user_index && result == null) {
-                if (name == uh.name) {
-                    result = uh.value;
-                } else if (name == "response") {
+                if (name == "response") { 
                     result = uh.response;
+                } else {
+                    for (let resource in uh.resources) {
+                        if (name == resource) {
+                            result = uh.resources[resource];
+                        }
+                    }
                 }
             }
         });
         if (result == null) {
-            throw new BadRequestError(`Failed to locate user_variable with name ${name}\nIn equation ${this.equation}`)
+            throw new BadRequestError(`Failed to locate user_variable with name ${name} for user ${user_index}\nIn equation ${this.equation}`)
         }
         return result;
     }

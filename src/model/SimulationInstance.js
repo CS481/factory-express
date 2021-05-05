@@ -7,7 +7,7 @@ import User from "./User.js";
 import BadRequestError from "../exception/BadRequestError.js";
 import UnauthorizedError from "../exception/UnauthorizedError.js";
 import SimEndError from "../exception/SimEndError.js";
- 
+
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
 
@@ -62,7 +62,6 @@ export default class SimulationInstance extends SimObj {
             throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
         }
 
-        console.log(state.user_waiting);
         return state;
     }
 
