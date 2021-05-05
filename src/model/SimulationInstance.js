@@ -5,13 +5,9 @@ import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
 import BadRequestError from "../exception/BadRequestError.js";
-<<<<<<< Updated upstream
 import UnauthorizedError from "../exception/UnauthorizedError.js";
 import SimEndError from "../exception/SimEndError.js";
- 
-=======
 
->>>>>>> Stashed changes
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
 
