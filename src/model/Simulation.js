@@ -40,7 +40,7 @@ export default class Simulation extends SimObj {
     async init_sim(user) {
         this.facilitator = user.id;
         this.start_text = "";
-        this.end_text = "";
+        this.end_text = "Thank you for playing!";
         let sim_id = await this.insert();
         return sim_id;
     };

@@ -6,6 +6,7 @@ import StateHistory from "./StateHistory.js";
 import User from "./User.js";
 import BadRequestError from "../exception/BadRequestError.js";
 import UnauthorizedError from "../exception/UnauthorizedError.js";
+import SimEndError from "../exception/SimEndError.js";
  
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
@@ -55,6 +56,12 @@ export default class SimulationInstance extends SimObj {
                 }
             });
         }
+
+        
+        if (instances[0].turn_number > simulation.round_count) {
+            throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
+        }
+
         console.log(state.user_waiting);
         return state;
     }
@@ -173,6 +180,9 @@ export default class SimulationInstance extends SimObj {
                 let new_Instance = new SimulationInstance();
                 await new_Instance.fromJsonObject(await this.toJsonObject());
                 new_Instance.turn_number++;
+                if (instances[0].turn_number >= sim.round_count) {
+                    throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
+                }
 
                 
                 for (let j = 0; j < this.player_responses.length; j++) {
