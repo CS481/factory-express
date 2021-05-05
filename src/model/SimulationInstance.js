@@ -5,9 +5,13 @@ import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
 import BadRequestError from "../exception/BadRequestError.js";
+<<<<<<< Updated upstream
 import UnauthorizedError from "../exception/UnauthorizedError.js";
 import SimEndError from "../exception/SimEndError.js";
  
+=======
+
+>>>>>>> Stashed changes
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
 
@@ -62,7 +66,6 @@ export default class SimulationInstance extends SimObj {
             throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
         }
 
-        console.log(state.user_waiting);
         return state;
     }
 
