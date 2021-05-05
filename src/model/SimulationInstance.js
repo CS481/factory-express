@@ -5,6 +5,7 @@ import State from "./State.js"
 import StateHistory from "./StateHistory.js";
 import User from "./User.js";
 import BadRequestError from "../exception/BadRequestError.js";
+import UnauthorizedError from "../exception/UnauthorizedError.js";
  
 export default class SimulationInstance extends SimObj {
     tablename = "SimulationInstances";
@@ -209,12 +210,31 @@ export default class SimulationInstance extends SimObj {
     * @param {model.Simulation} simulation The simulation to create this instance from
     * @returns {string} The id of the sim instance
     */ 
-    async begin_sim(user, simulation) {
+    async begin_sim(user, simulation) { 
+        
+        /*  TODO:
+        *   User being both players in same sim. 
+        *   Needs to be stopped. 
+        *   Plan: Check the Simulation in BeginSim for the existing user. If user exists, throw error. 
+        */
         this.user_count = {"$lt": simulation.user_count};
         let instances = await this.selectMany();
+        // Set the same player to be false to try to begin sim. 
+        let same_player = false;
+
         if (await instances.length == 0) {
             return await this._new_sim_instance(user, simulation);
         } else {
+            // If simInst is already created, Check the entries
+            await instances[0].player_responses.forEach(user_elm =>{
+                //If an entry is the same, set the variable to true. 
+                same_player = user_elm.user == user.id;
+            } );
+
+            // If same player exists (set to true) throw error. 
+            if (same_player == true){
+                throw new UnauthorizedError("User aready joined this instance");
+            } 
             await instances[0]._add_to_sim_instance(user, simulation);
             return this.id;
         }
