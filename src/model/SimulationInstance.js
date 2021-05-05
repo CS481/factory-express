@@ -58,7 +58,7 @@ export default class SimulationInstance extends SimObj {
         }
 
         
-        if (instances[0].turn_number >= simulation.round_count) {
+        if (instances[0].turn_number > simulation.round_count) {
             throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
         }
 
@@ -180,6 +180,9 @@ export default class SimulationInstance extends SimObj {
                 let new_Instance = new SimulationInstance();
                 await new_Instance.fromJsonObject(await this.toJsonObject());
                 new_Instance.turn_number++;
+                if (instances[0].turn_number > sim.round_count) {
+                    throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
+                }
 
                 
                 for (let j = 0; j < this.player_responses.length; j++) {
