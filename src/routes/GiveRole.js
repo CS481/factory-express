@@ -6,8 +6,8 @@ import VoidSchema from "../simulation-schema/js/Void.js";
 var router = new Router("GiveRole", GiveRole, VoidSchema);
 router.post(async function(req){
     let user = await new User().fromJsonObject(req.user);
-    delete req.user; // Remove user from the message so we don't override it in modify_sim{
-    await new User().RoleUpdate(user,req);
+    delete req.user; 
+    await user.RoleUpdate(user, req);
     return {};
 });
 
