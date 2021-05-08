@@ -120,8 +120,9 @@ export default class User extends SimObj {
      *  Allows for Role changes
      */
     async RoleUpdate(user, roledata) {
-        this.user = roledata.id;
+        this.id = roledata.id;
         await this.select(); 
+       
         this.fromJsonObject(roledata);
         await this.replace(user);
     }
