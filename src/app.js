@@ -16,6 +16,8 @@ import BeginSim from "./routes/BeginSim.js";
 import GetState from "./routes/GetState.js";
 import SubmitResponse from "./routes/SubmitResponse.js";
 import DataDump from "./routes/DataDump.js";
+import GiveRole from "./routes/GiveRole.js";
+
 
 var app = express();
 app.use(cors()); // Enable all CORS requests
