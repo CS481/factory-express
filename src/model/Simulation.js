@@ -74,7 +74,6 @@ export default class Simulation extends SimObj {
     async GetAllSims(user){
         this.facilitator = user.id;
         let Simlist = await this.selectMany();
-        await this.select();
         return Simlist;
     }
 
