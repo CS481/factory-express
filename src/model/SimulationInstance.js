@@ -3,7 +3,6 @@ import SimObj from "./SimObj.js";
 import Simulation from "./Simulation.js";
 import State from "./State.js"
 import StateHistory from "./StateHistory.js";
-import AllSims from "./AllSims.js";
 import User from "./User.js";
 import BadRequestError from "../exception/BadRequestError.js";
 import UnauthorizedError from "../exception/UnauthorizedError.js";
@@ -69,19 +68,6 @@ export default class SimulationInstance extends SimObj {
         await state_history.fromJsonObject(await this.toJsonObject());
         return state_history;
     }
-
-    /**
-     * Get the All_Sims object that represents a Simulation
-     * @returns {model.All_Sims}
-    
-
-     async getAllSims() {
-        let All_Sims = new AllSims();
-        await All_Sims.fromJsonObject(await this.toJsonObject());
-        return All_Sims;
-    }
-     */
-
 
     /** Submits the user response
      * @param  {model.User} user
