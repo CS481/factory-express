@@ -31,7 +31,6 @@ export default class User extends SimObj {
     async fromJsonObject(jsonObj) {
         this.username = jsonObj.username;
         this.password = jsonObj.password;
-        this.role = jsonObj.role;
         await this.select();
         return this;
     }
@@ -44,6 +43,7 @@ export default class User extends SimObj {
         if (await bcrypt.compare(this.password, dbRecord.password)) {
             // User successfully authenticated, set any other information here
             this.id = dbRecord.id;
+            this.role = dbRecord.role;
         } else {
             throw new UnauthorizedError("User not authenticated");
         }
