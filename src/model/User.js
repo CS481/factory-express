@@ -17,6 +17,7 @@ export default class User extends SimObj {
         let user = new User();
         user.username = userObj.username;
         user.password = userObj.password; // No need to enforce restrictions; we can use the schema for that
+        user.role = userObj.role;
         user.id = await user.insert(user);
         return user;
     }
@@ -42,6 +43,7 @@ export default class User extends SimObj {
         if (await bcrypt.compare(this.password, dbRecord.password)) {
             // User successfully authenticated, set any other information here
             this.id = dbRecord.id;
+            this.role = dbRecord.role;
         } else {
             throw new UnauthorizedError("User not authenticated");
         }
@@ -53,6 +55,7 @@ export default class User extends SimObj {
     async toDatabaseRecord() {
         let record = await this.toJsonObject();
         record.password = await bcrypt.hash(this.password, (Number)(process.env.BCRYPT_ROUNDS));
+        record.role = this.role;
         return record;
     }
 
@@ -113,6 +116,13 @@ export default class User extends SimObj {
         }
         let conn = DBConnFactory();
         conn.replace({id: this.id}, await this.toDatabaseRecord(), this.tablename);
+    }
+     /**
+     *  Allows for Role changes
+     */
+    async RoleUpdate(user, roledata) {
+        this.role = roledata.role;
+        await this.replace(user);
     }
 
     /**
