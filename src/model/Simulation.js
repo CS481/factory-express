@@ -72,9 +72,10 @@ export default class Simulation extends SimObj {
     * @param {model.User} The user to get the Simulations
     **/
     async GetAllSims(user){
-           //await this.select();
-           //let Simlist = 
-           //return Simlist;
+        this.facilitator = user.id;
+        let Simlist = await this.selectMany();
+        await this.select();
+        return Simlist;
     }
 
     /**
