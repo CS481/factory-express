@@ -55,6 +55,7 @@ export default class User extends SimObj {
     async toDatabaseRecord() {
         let record = await this.toJsonObject();
         record.password = await bcrypt.hash(this.password, (Number)(process.env.BCRYPT_ROUNDS));
+        record.role = this.role;
         return record;
     }
 
@@ -120,9 +121,6 @@ export default class User extends SimObj {
      *  Allows for Role changes
      */
     async RoleUpdate(user, roledata) {
-        this.fromJsonObject(roledata);
-        console.log(await this.toJsonObject());
-        await this.select(); 
         this.role = roledata.role;
         await this.replace(user);
     }
