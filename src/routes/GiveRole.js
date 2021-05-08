@@ -7,7 +7,7 @@ var router = new Router("GiveRoll", GiveRollSchema, VoidSchema);
 router.post(async function(req){}
     let user = await new User().fromJsonObject(req.user);
     delete req.user; // Remove user from the message so we don't override it in modify_sim{
-    await new User().RollUpdate(user,req);
+    await new User().RoleUpdate(user,req);
     return {};
 });
 
