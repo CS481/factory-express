@@ -2,7 +2,7 @@ import SimObj from "./SimObj.js";
 import DBConnFactory from "../database/DBConnFactory.js";
 import bcrypt from "bcryptjs";
 import UnauthorizedError from "../exception/UnauthorizedError.js"
-import UnprocessableError from "../exception/UnprocessableError.js";
+import ForbiddenError from "../exception/ForbiddenError.js";
 
 //TODO: Password encryption (bcrypt?)
 export default class User extends SimObj {
@@ -11,13 +11,18 @@ export default class User extends SimObj {
 
     /**
      * Sign up a new user
+     * In order to use this function, the current user must be an authenticated admin
      * @param {Object} userObj The object containing the username and password of the new user
      */
-    static async SignUp(userObj) {
+    async SignUp(userObj) {
+        if (this.role != "admin") {
+            throw new ForbiddenError("This user does not have permissions to create new accounts");
+        }
+
         let user = new User();
         user.username = userObj.username;
-        user.password = userObj.password; // No need to enforce restrictions; we can use the schema for that
-        user.role = userObj.role;
+        user.password = userObj.password; // No need to enforce restrictions; we can rely on the schema for that
+        user.role = "participant";
         user.id = await user.insert(user);
         return user;
     }
