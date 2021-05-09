@@ -17,6 +17,7 @@ import GetState from "./routes/GetState.js";
 import SubmitResponse from "./routes/SubmitResponse.js";
 import DataDump from "./routes/DataDump.js";
 import GiveRole from "./routes/GiveRole.js";
+import GetAllSims from "./routes/GetAllSims.js";
 
 
 var app = express();

@@ -306,7 +306,7 @@ export default class SimulationInstance extends SimObj {
             usernames = await instance._write_to_csv(writer, usernames);
         }
     }
-
+   
     /**
      * Write this specific simulationinstance's data to the csv
      * @param {util.StrictCsvWriter} writer The csvWriter object

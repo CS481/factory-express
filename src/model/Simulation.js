@@ -45,6 +45,14 @@ export default class Simulation extends SimObj {
         return sim_id;
     };
 
+     async GetAllSims(user, req){
+        this.facilitator = user.id;
+        console.log(await this.toJsonObject());
+        let instances = await this.selectMany();
+        await this.select();
+        return instances;
+    }
+
     /** Sets the turn_number round to 0 to begin the existing simulation
     * @param {model.User} user The user to begin the simulation
     * @returns {string} The id of the simulation instance this user is a part of
@@ -102,4 +110,5 @@ export default class Simulation extends SimObj {
     async modifyableBy(user) {
         return user.id == this.facilitator;
     }
+   
 };
