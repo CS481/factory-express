@@ -28,6 +28,19 @@ export default class SimulationInstance extends SimObj {
         return obj;
     }
 
+    /**
+     * Returns the number of user responses that have been recorded by this simulation instance
+     */
+    get_response_count() {
+        let n = 0;
+        for (let response of this.player_responses) {
+            if (response.response != "") {
+                n++;
+            }
+        }
+        return n;
+    }
+
     /** Get the state of the Simulation
      * @returns {model.State} Returns the state of the simulaiton
      */ 
@@ -58,7 +71,7 @@ export default class SimulationInstance extends SimObj {
         }
 
         
-        if (instances[0].turn_number > simulation.round_count) {
+        if (instances[0].turn_number >= simulation.round_count-1 && instances[0].get_response_count() == simulation.user_count) {
             throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
         }
 
@@ -179,7 +192,7 @@ export default class SimulationInstance extends SimObj {
                 let new_Instance = new SimulationInstance();
                 await new_Instance.fromJsonObject(await this.toJsonObject());
                 new_Instance.turn_number++;
-                if (instances[0].turn_number >= sim.round_count) {
+                if (new_Instance.turn_number >= sim.round_count) {
                     throw new SimEndError("The Simulation Has Ended! Thank You For Playing")
                 }
 
@@ -189,7 +202,7 @@ export default class SimulationInstance extends SimObj {
                     new_Instance.player_responses[j].response = "";
                 }                
                 
-                await new_Instance.insert();               
+                await new_Instance.insert();
                 
             }
         };
